@@ -17,6 +17,6 @@
 
 3. Run the application:
     ```bash
-    npm start
+    npm run dev
     ```
 5. Visit `http://localhost:3000` in your browser to view the application.
