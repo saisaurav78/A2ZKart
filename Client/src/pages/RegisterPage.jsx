@@ -17,7 +17,6 @@ const RegisterPage = () => {
       setError('Please ensure all fields are valid.');
       return;
     }
-    
     setError('');
     alert('Registered successfully');
   };
@@ -42,15 +41,10 @@ const RegisterPage = () => {
             onChange={(e) => {
               const value = e.target.value;
               setEmail(value);
-              setEmailValid(value.includes('@'));
+              setEmailValid(value.includes('@')&& value.indexOf('.com')!==-1);
             }}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
-          />
-          {emailValid ? (
-            <span className='text-customPalette-blue text-sm'>Email looks good </span>
-          ) : (
-            <span className='text-customPalette-red text-sm'>Invalid Email</span>
-          )}
+          />{email.length > 0 ? (emailValid?(<span className='text-customPalette-blue text-sm'>Email looks good</span>):(<span className='text-customPalette-red text-sm'>Invalid email</span>) ): (<></>) }
         </div>
         <div className='relative mb-4'>
           <label htmlFor='password' className='leading-7 text-sm text-gray-600'>
@@ -64,16 +58,16 @@ const RegisterPage = () => {
             onChange={(e) => {
               const value = e.target.value;
               setPassword(value);
-              setPasswordValid(value.length >= 8);
+              setPasswordValid(value.length >= 8 && value.length<=20);
               setPasswordsMatch(value === confirmPassword);
             }}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {passwordValid ? (
+        {password&& passwordValid ? (
             <span className='text-customPalette-blue text-sm'>Password looks good </span>
           ) : (
             <span className='text-customPalette-red text-sm'>
-              Password should be at least 8 characters
+              Password should be 8-20 characters
             </span>
           )}
         </div>
@@ -103,7 +97,7 @@ const RegisterPage = () => {
           Have an Account? Sign in{' '}
           <Link
             to='/login'
-            className='text-customPalette-blue underline font-semibold hover:text-customPalette-red'
+            className='text-customPalette-blue underline text-lg hover:text-customPalette-red'
           >
             here
           </Link>

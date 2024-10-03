@@ -3,7 +3,7 @@ import { NavLink } from 'react-router-dom';
 
 const Footer = () => {
   return (
-    <footer className='relative mt-[80%] w-[100%] h-max text-customPalette-white bg-customPalette-black px-4 md:px-20 py-16'>
+    <footer className='relative w-[100%] h-max text-customPalette-white bg-customPalette-black px-4 md:px-20 py-16'>
       <div className='container flex flex-col md:flex-row justify-between'>
         <div className='flex flex-col items-start justify-evenly mb-4'>
           <h1 className='text-xl hover:text-customPalette-blue'>Quick Links</h1>

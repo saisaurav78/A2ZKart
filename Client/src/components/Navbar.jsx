@@ -2,17 +2,17 @@ import React, {  useContext, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 
 const Navbar = (props) => {
-  const [navbarValue, setnavbarValue] = useState('')
+  const [query, setQuery] = useState('')
   const handleSearch = (e) => {
     e.preventDefault()
-    props.onInputChange(navbarValue)
-    setnavbarValue('')
+    props.onInputChange(query)
+    setQuery('')
   }
 
   return (
-      <nav className='bg-customPalette-white shadow-lg'>
-      <div className='container mx-auto flex justify-between items-center py-4 px-6'>
-        <h1 className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-yellow'>
+      <nav className='bg-customPalette-white w-[100%] shadow-lg container'>
+      <div className='container-fluid mx-auto flex justify-between items-center py-4 px-6 w-[100%]'>
+        <h1 className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-blue'>
           <NavLink to='/'>A2ZKart</NavLink>
         </h1>
         <form
@@ -21,10 +21,10 @@ const Navbar = (props) => {
         >
           <input
             type='text'
-          value={navbarValue}
+          value={query}
             placeholder='Search'
-            onChange={(e)=>{setnavbarValue(e.target.value)}}
-            className='border-2 border-customPalette-blue rounded-md h-10 w-full focus:outline-none focus:border-customPalette-yellow px-2'
+            onChange={(e)=>{setQuery(e.target.value)}}
+            className='border-2 border-customPalette-blue rounded-md h-10 w-full text-customPalette-black text-lg focus:outline-none focus:border-customPalette-yellow px-2'
           />
           <button
             type='submit'
@@ -50,8 +50,16 @@ const Navbar = (props) => {
         <ul className='flex space-x-8'>
           <li>
             <NavLink
+              to='/products'
+              className='flex items-center space-x-2 hover:text-customPalette-blue'
+            >
+              <p>Products</p>
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
               to='/cart'
-              className='flex items-center space-x-2 hover:text-customPalette-red'
+              className='flex items-center space-x-2 hover:text-customPalette-blue'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
@@ -93,7 +101,7 @@ const Navbar = (props) => {
           <li>
             <NavLink
               to='/notifications'
-              className='flex items-center space-x-2 hover:text-customPalette-yellow'
+              className='flex items-center space-x-2 hover:text-customPalette-blue'
             >
               <svg
                 xmlns='http://www.w3.org/2000/svg'
