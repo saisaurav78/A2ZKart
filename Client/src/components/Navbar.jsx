@@ -12,9 +12,9 @@ const Navbar = (props) => {
   return (
       <nav className='bg-customPalette-white w-[100%] shadow-lg container'>
       <div className='container-fluid mx-auto flex justify-between items-center py-4 px-6 w-[100%]'>
-        <h1 className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-blue'>
+        <span className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-red'>
           <NavLink to='/'>A2ZKart</NavLink>
-        </h1>
+        </span>
         <form
           className='flex items-center space-x-2 max-w-sm w-full'
           onSubmit={handleSearch}

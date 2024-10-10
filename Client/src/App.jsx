@@ -1,35 +1,58 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react';
 import { userContext } from './userContext';
-import Navbar from './components/Navbar'
+import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import CartPage from './pages/CartPage';
 import RegisterPage from './pages/RegisterPage';
 import DetailPage from './pages/DetailPage';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Footer from './components/Footer';
 import ProductsPage from './pages/ProductsPage';
 
 const App = () => {
-  const [query, setQuery] = useState('')
-  const onInputChange = (newvalue) => {
-    setQuery(newvalue)
-  }
+  const [transition, setTransition] = useState(false);
+  const location = useLocation();
+  const [query, setQuery] = useState('');
+
+  useEffect(() => {
+    setTransition(true);
+    const timeout = setTimeout(() => {
+      setTransition(false);
+    }, 1000);
+    return () => clearTimeout(timeout); 
+  }, [location]);
+
+  const onInputChange = (newValue) => {
+    setQuery(newValue);
+  };
+
   return (
     <>
-        <Navbar onInputChange={onInputChange} />
-        <Routes>
-          <Route path='/' element={<LandingPage/>}></Route>
-          <Route path='/products' element={<ProductsPage searchQuery={query } />}></Route>
-          <Route path='/cart' element={<CartPage />}></Route>
-          <Route path='/login' element={<LoginPage />}></Route>
-          <Route path='/register' element={<RegisterPage />}></Route>
-          <Route path='/productdetail' element={<DetailPage />}></Route>
-        </Routes>
-      <Footer />
+      {transition ? (
+        <div className='bg-customPalette-blue absolute w-full h-full z-20 flex justify-center items-center transition-all'>
+          <div className='text-5xl animate-bounce text-customPalette-yellow font-medium'>
+            A2ZKart
+          </div>
+        </div>
+      ) : (
+        <>
+          <Navbar onInputChange={onInputChange} />
+          <Routes key={location.pathname}>
+            <Route path='/' element={<LandingPage />} />
+            <Route path='/products' element={<ProductsPage searchQuery={query} />} />
+            <Route path='/cart' element={<CartPage />} />
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/register' element={<RegisterPage />} />
+            <Route path='/productdetail' element={<DetailPage />} />
+          </Routes>
+          <Footer />
+        </>
+      )}
     </>
   );
-}
-export default App
+};
+
+export default App;

@@ -26,15 +26,15 @@ const ProductCategory = () => {
   return (
     <>
       <aside
-        className={`w-max bg-customPalette-blue relative flex flex-col justify-evenly items-start shadow-lg opacity-${visible}`}
+        className={`w-max bg-customPalette-white relative flex flex-col justify-evenly items-start shadow-lg opacity-${visible}`}
       >
         <h2 className='font-medium text-xl w-full p-3 text-center text-customPalette-black'>
           Categories
         </h2>
         <div
           key={'all'}
-          className='flex flex-1 justify-evenly items-center p-2 border-2 border-customPalette-white  hover:bg-customPalette-yellow 
-           w-full'
+          className={`flex flex-1 justify-evenly items-center p-2 border-customPalette-blue border-${selected==='All'?2:0} hover:bg-customPalette-yellow 
+           w-full`}
         >
           <label
             htmlFor={'All'}
@@ -57,8 +57,8 @@ const ProductCategory = () => {
           categories.map((category) => (
             <div
               key={category}
-              className='flex flex-1 justify-evenly items-center p-2 border-2 border-customPalette-white hover:bg-customPalette-yellow 
-           transition-all duration-75 w-full'
+              className={`flex flex-1 justify-evenly items-center p-2 border-${selected===category?2:0} border-customPalette-blue  hover:bg-customPalette-yellow 
+           transition-all duration-75 w-full`}
             >
               <label
                 htmlFor={category}

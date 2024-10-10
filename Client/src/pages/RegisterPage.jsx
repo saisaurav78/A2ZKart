@@ -18,6 +18,9 @@ const RegisterPage = () => {
       return;
     }
     setError('');
+    setEmail('')
+    setPassword('')
+    setConfirmPassword('')
     alert('Registered successfully');
   };
 
@@ -27,10 +30,10 @@ const RegisterPage = () => {
         onSubmit={handleRegister}
         className='lg:w-1/3 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'
       >
-        <h2 className='text-gray-900 text-lg font-medium title-font mb-5'>Register</h2>
+        <span className='text-customPalette-black text-xl font-medium title-font mb-5'>Register</span>
         {error && <span className='text-customPalette-red text-sm mb-4'>{error}</span>}
         <div className='relative mb-4'>
-          <label htmlFor='email' className='leading-7 text-sm text-gray-600'>
+          <label htmlFor='email' className='text-customPalette-black text-md'>
             Email
           </label>
           <input
@@ -47,7 +50,7 @@ const RegisterPage = () => {
           />{email.length > 0 ? (emailValid?(<span className='text-customPalette-blue text-sm'>Email looks good</span>):(<span className='text-customPalette-red text-sm'>Invalid email</span>) ): (<></>) }
         </div>
         <div className='relative mb-4'>
-          <label htmlFor='password' className='leading-7 text-sm text-gray-600'>
+          <label htmlFor='password' className='text-customPalette-black text-md'>
             Password
           </label>
           <input
@@ -63,16 +66,16 @@ const RegisterPage = () => {
             }}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-        {password&& passwordValid ? (
+        {password.length>0 ? passwordValid ? (
             <span className='text-customPalette-blue text-sm'>Password looks good </span>
           ) : (
             <span className='text-customPalette-red text-sm'>
               Password should be 8-20 characters
             </span>
-          )}
+          ) : <></>}
         </div>
         <div className='relative mb-4'>
-          <label htmlFor='confirmpassword' className='leading-7 text-sm text-gray-600'>
+          <label htmlFor='confirmpassword' className='text-md text-customPalette-black'>
             Confirm Password
           </label>
           <input
@@ -87,11 +90,11 @@ const RegisterPage = () => {
             }}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {passwordsMatch ? (
+          {password? passwordsMatch ? (
             <span className='text-customPalette-blue text-sm'>Passwords match</span>
           ) : (
             <span className='text-customPalette-red text-sm'>Passwords do not match</span>
-          )}
+          ):<></>}
         </div>
         <p>
           Have an Account? Sign in{' '}
@@ -103,7 +106,7 @@ const RegisterPage = () => {
           </Link>
         </p>
         <br />
-        <button className='text-customPalette-white bg-customPalette-blue border-0 py-2 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'>
+        <button className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-2 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'>
           Register
         </button>
       </form>

@@ -25,10 +25,10 @@ const LoginPage = () => {
         onSubmit={handleLogin}
         className='lg:w-1/3 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'
       >
-        <h2 className='text-gray-900 text-lg font-medium title-font mb-5'>Sign in</h2>
+        <span className='text-customPalette-black text-xl font-medium title-font mb-5'>Sign in</span>
         {error && <span className='text-customPalette-red text-sm mb-4'>{error}</span>}
         <div className='relative mb-4'>
-          <label htmlFor='email' className='leading-7 text-sm text-gray-600'>
+          <label htmlFor='email' className='text-md text-customPalette-black'>
             Email
           </label>
           <input
@@ -55,7 +55,7 @@ const LoginPage = () => {
           )}
         </div>
         <div className='relative mb-4'>
-          <label htmlFor='password' className='leading-7 text-sm text-gray-600'>
+          <label htmlFor='password' className='text-md text-customPalette-black'>
             Password
           </label>
           <input
