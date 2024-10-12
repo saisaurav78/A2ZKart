@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 
 const CartPage = () => {
+  const [discount,setDiscount]=useState(0)
   const [quantity, setQuantity] = useState(1);
   const [cartItems, setCartItems] = useState([]);
   const [cartTotal, setcartTotal] = useState(0);
@@ -19,7 +20,7 @@ const CartPage = () => {
     const updatedItems = cartItems.filter((item) => item.id !== id)
     localStorage.setItem("cart", JSON.stringify(updatedItems))
     setCartItems(updatedItems)
-}
+  }
   useEffect(() => {
     loadCartItems();
   }, []);
@@ -32,16 +33,26 @@ const CartPage = () => {
     );
     setcartTotal(itemsPriceTotal); 
   }, [cartItems]); 
-
+  const handleDiscount = (e) => {
+    if (e.target.value === 'WELCOME10') {
+    setDiscount(10)
+    }
+    else {
+      setDiscount(0)
+    }
+}
   return (
     <>
-      <section className='grid lg:grid-cols-2 grid-rows-[auto,1fr] gap-8'>
+      <section
+        className='lg:grid lg:grid-cols-2 lg:grid-rows-[auto,1fr] gap-8 sm:flex sm:flex-row sm:flex-wrap 
+      sm:justify-center sm:mx-5 '
+      >
         {cartItems.length > 0 ? (
           <>
             <div className='col-span-1 row-span-2'>
               <span className='text-4xl text-center m-5 block'>Your Cart</span>
               <hr />
-              <table className='shadow-md m-5 min-w-[50vw]'>
+              <table className='shadow-md m-5 lg:w-[50vw] sm:mt-20'>
                 <thead>
                   <tr>
                     <th className='px-4 py-2'>Item</th>
@@ -101,12 +112,41 @@ const CartPage = () => {
               </table>
             </div>
 
-            <div className='col-start-2 flex flex-col mx-28 m-20 row-end-4 text-customPalette-red'> 
-              <span className='self-start text-2xl'>Sub Total: $ {Math.ceil(cartTotal)}</span>
+            <div className='col-start-2 lg:flex lg:flex-col lg:mx-28 m-20 lg:gap-6 sm:gap-8 row-end-3 text-customPalette-black'>
+              <span className='self-start text-xl text-customPalette-blue'>
+                Sub Total: $ {Math.ceil(cartTotal)}
+              </span>
               <hr />
-              <span className='self-start text-xl'>Shipping: $ 5.00</span>
+              <span className='self-start text-xl text-customPalette-blue'>Shipping: $ 5.00</span>
               <hr />
-              <span className='self-start text-4xl'>Net Total: $ {Math.ceil(cartTotal) + 5 }</span>
+              {discount > 0 ? (
+                <span className='self-start text-xl text-customPalette-red'>
+                  Discount: {discount + '%'}{' '}
+                </span>
+              ) : (
+                <span className='self-start text-xl'>use WELCOME10 for 10% discount</span>
+              )}
+
+              <input
+                placeholder='Coupon Code'
+                className='border-none p-1 outline-none text-customPalette-blue'
+                type='text'
+                onChange={(e) => {
+                  handleDiscount(e);
+                }}
+                name='discountInput'
+                id='discountInput'
+              />
+              <hr />
+              <span className='self-start text-4xl font-medium text-customPalette-red'>
+                Total: $ {Math.ceil(cartTotal + 5) * ((100 - discount) / 100)}
+              </span>
+              <button
+                className='border-none bg-customPalette-blue text-xl text-customPalette-white shadow-md p-3
+              hover:bg-customPalette-yellow hover:text-customPalette-black transition-all '
+              >
+                Checkout
+              </button>
             </div>
           </>
         ) : (

@@ -5,7 +5,7 @@ import axios from 'axios';
 const ProductCategory = () => {
   const { selected, setSelected } = useContext(userContext);
   const [categories, setCategories] = useState([]);
-  const [visible,setVisible]= useState('1')
+
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -19,14 +19,11 @@ const ProductCategory = () => {
 
     fetchCategories();
   }, []);
-  function toggleCategory() {
-   setVisible('0')
-  }
 
   return (
     <>
       <aside
-        className={`w-max bg-customPalette-white relative flex flex-col justify-evenly items-start shadow-lg opacity-${visible}`}
+        className={`w-max bg-customPalette-white relative  hidden lg:flex flex-col justify-evenly items-start shadow-lg`}
       >
         <h2 className='font-medium text-xl w-full p-3 text-center text-customPalette-black'>
           Categories

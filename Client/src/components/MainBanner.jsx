@@ -9,7 +9,7 @@ const MainBanner = () => {
           className='w-full h-full flex 
          flex-col items-center justify-center mt-5'
         >
-          <span className='text-5xl font-medium p-0 text-customPalette-blue'>A2Z Kart</span>
+          <span className='text-4xl font-medium p-0 text-customPalette-blue'>A2ZKart</span>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             enable-background='new 0 0 5250 3000'

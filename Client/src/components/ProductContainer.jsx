@@ -70,26 +70,25 @@ const handleSort = (e) => {
   return (
     <>
       {' '}
-      <div className='lg:relative text-xl m-5 flex justify-around items-center'>
-        <span className='text-customPalette-black text-lg mr-72'>
-          {' '}
-          showing {products.length} products{' '}
+      <div className='lg:relative text-xl m-5 flex lg:flex-row sm:flex-col sm:items-center justify-evenly flex-wrap lg:items-center sm:space-y-4 lg:space-y-0 lg:justify-between'>
+        <span className='text-customPalette-black text-base text-wrap lg:ml-40'>
+          Showing {products.length} products
         </span>
-        <select className='font-1 h-12 bg-customPalette-white text-xl font-normal' name='' id='' onChange={handleSort}>
-          <option className='font-1' value='>'>
-            Price High to Low
-          </option>
-          <option className='font-1' value='<'>
-            Price Low to high
-          </option>
-          <option selected className='font-1' value='='>
+        <select
+          className='font-1 h-12 bg-customPalette-white text-xl font-normal sm:w-full lg:w-auto'
+          onChange={handleSort}
+        >
+          <option value='>'>Price High to Low</option>
+          <option value='<'>Price Low to High</option>
+          <option value='=' selected>
             Popular
           </option>
         </select>
       </div>
       <main
-        className='lg:w-[65vw] lg:mt-4 lg:m-10 lg:p-5 grid lg:grid-cols-3 gap-2
-       md:grid-cols-2 sm:grid-cols-1 sm: w-[80vw] sm:mt-10 sm:m-5'>
+        className='lg:w-[70vw] lg:mt-4 lg:m-10 lg:p-5 grid lg:grid-cols-3 gap-2
+       md:grid-cols-2 sm:grid-cols-1 sm:mt-10 sm:m-5'
+      >
         {loading ? (
           <Skeleton count={30} height={'max'} width={'60vw'} />
         ) : products.length <= 0 ? (

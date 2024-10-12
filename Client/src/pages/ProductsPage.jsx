@@ -9,12 +9,9 @@ const ProductsPage = (props) => {
   return (
     <userContext.Provider value={{ selected, setSelected }}>
       <div className='flex flex-col lg:flex-row'>
-        {/* Product Category Component */}
         <div className='lg:w-1/4 w-full p-4'>
           <ProductCategory />
         </div>
-
-        {/* Product Container Component */}
         <div className='lg:w-3/4 w-full p-4'>
           <ProductContainer searchQuery={props.searchQuery} />
         </div>
