@@ -1,48 +1,61 @@
 import React, { useEffect, useState } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CartPage = () => {
-  const [discount,setDiscount]=useState(0)
-  const [quantity, setQuantity] = useState(1);
+  const [discount, setDiscount] = useState(0);
+  const [quantity, setQuantity] = useState([]);
   const [cartItems, setCartItems] = useState([]);
-  const [cartTotal, setcartTotal] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+
   const loadCartItems = () => {
-    let items = JSON.parse(localStorage.getItem('cart')) || [];
+    const items = JSON.parse(localStorage.getItem('cart')) || [];
     setCartItems(items);
+    setQuantity(items.map(() => 1));
   };
+
   const removeItem = (id) => {
-     toast('Removed from Cart', {
-       theme: 'dark',
-       autoClose: 2000,
-       type: 'error',
-       pauseOnHover: false,
-     });
-    const updatedItems = cartItems.filter((item) => item.id !== id)
-    localStorage.setItem("cart", JSON.stringify(updatedItems))
-    setCartItems(updatedItems)
-  }
+    toast('Removed from Cart', {
+      theme: 'dark',
+      autoClose: 2000,
+      type: 'error',
+      pauseOnHover: false,
+    });
+    const updatedItems = cartItems.filter((item) => item.id !== id);
+    localStorage.setItem('cart', JSON.stringify(updatedItems));
+    setCartItems(updatedItems);
+  };
+
   useEffect(() => {
     loadCartItems();
   }, []);
 
   useEffect(() => {
-    let itemsPrice = cartItems.map((item) => parseFloat(item.price));
-    let itemsPriceTotal = itemsPrice.reduce(
+    const itemsPrice = cartItems.map((item, index) => parseFloat(item.price) * quantity[index]);
+    const itemsPriceTotal = itemsPrice.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
     );
-    setcartTotal(itemsPriceTotal); 
-  }, [cartItems]); 
+    setCartTotal(itemsPriceTotal);
+  }, [cartItems, quantity]);
+
   const handleDiscount = (e) => {
     if (e.target.value === 'WELCOME10') {
-    setDiscount(10)
+      setDiscount(10);
+    } else {
+      setDiscount(0);
     }
-    else {
-      setDiscount(0)
-    }
-}
+  };
+
+  const handleQuantity = (e, index) => {
+    const newQuantities = [...quantity];
+    newQuantities[index] = e.target.value;
+    setQuantity(newQuantities);
+  };
+
   return (
     <>
+      <ToastContainer />
       <section
         className='lg:grid lg:grid-cols-2 lg:grid-rows-[auto,1fr] gap-8 sm:flex sm:flex-row sm:flex-wrap 
       sm:justify-center sm:mx-5 '
@@ -70,7 +83,7 @@ const CartPage = () => {
                         <img
                           src={`${item.images[0]}`}
                           className='w-28 max-h-28 object-contain mx-auto'
-                          alt=''
+                          alt={item.title}
                         />
                       </td>
                       <td className='px-4 py-2'>
@@ -78,14 +91,19 @@ const CartPage = () => {
                           type='number'
                           min={1}
                           max={10}
-                          value={quantity}
-                          onChange={(e) => setQuantity(e.target.value)}
+                          onKeyDown={(e)=>e.preventDefault()}
+                          value={quantity[index] || 1}
+                          onChange={(e) => handleQuantity(e, index)}
                           className='w-20 mx-auto'
                         />
                       </td>
-                      <td className='px-4 py-2'>$ {Math.ceil(item.price * quantity)}</td>
+                      <td className='px-4 py-2'>
+                        $ {Math.ceil(item.price * quantity[index])}
+                      </td>
                       <td className='px-4 py-2'>
                         <button
+                          title='delete'
+                          className='text-customPalette-red'
                           onClick={() => {
                             removeItem(item.id);
                           }}
@@ -139,7 +157,7 @@ const CartPage = () => {
               />
               <hr />
               <span className='self-start text-4xl font-medium text-customPalette-red'>
-                Total: $ {Math.ceil(cartTotal + 5) * ((100 - discount) / 100)}
+                Total: $ {Math.ceil((cartTotal + 5) * ((100 - discount) / 100))}
               </span>
               <button
                 className='border-none bg-customPalette-blue text-xl text-customPalette-white shadow-md p-3
@@ -152,7 +170,7 @@ const CartPage = () => {
         ) : (
           <div className='col-span-2 m-16 flex flex-col items-center justify-center'>
             <span className='text-4xl font-sans'>Your Cart is Empty</span>
-            <svg
+                    <svg
               xmlns='http://www.w3.org/2000/svg'
               enable-background='new 0 0 1500 1500'
               viewBox='0 0 1500 1500'
@@ -341,7 +359,6 @@ const CartPage = () => {
           </div>
         )}
       </section>
-      <ToastContainer />
     </>
   );
 };

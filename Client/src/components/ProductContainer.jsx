@@ -12,7 +12,7 @@ const ProductContainer = (props) => {
     if (e.target.innerHTML === 'Add to Cart') {
       toast('Added to Cart', {
         theme: 'dark',
-        autoClose: 2000,
+        autoClose: 1000,
         type: 'success',
         pauseOnHover: false,
       });
@@ -80,7 +80,7 @@ const handleSort = (e) => {
         >
           <option value='>'>Price High to Low</option>
           <option value='<'>Price Low to High</option>
-          <option value='=' selected>
+          <option value='' selected>
             Popular
           </option>
         </select>
