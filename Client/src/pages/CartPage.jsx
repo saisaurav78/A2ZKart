@@ -11,7 +11,7 @@ const CartPage = () => {
   const loadCartItems = () => {
     const items = JSON.parse(localStorage.getItem('cart')) || [];
     setCartItems(items);
-    setQuantity(items.map(() => 1));
+    setQuantity(items.map((item) => item.quantity ));
   };
 
   const removeItem = (id) => {
@@ -51,6 +51,12 @@ const CartPage = () => {
     const newQuantities = [...quantity];
     newQuantities[index] = e.target.value;
     setQuantity(newQuantities);
+
+    const updatedCartItems = [...cartItems];
+    updatedCartItems[index].quantity = parseInt(e.target.value);
+    setCartItems(updatedCartItems);
+
+    localStorage.setItem('cart', JSON.stringify(updatedCartItems));
   };
 
   return (
@@ -92,7 +98,7 @@ const CartPage = () => {
                           min={1}
                           max={10}
                           onKeyDown={(e)=>e.preventDefault()}
-                          value={quantity[index] || 1}
+                          value={item.quantity}
                           onChange={(e) => handleQuantity(e, index)}
                           className='w-20 mx-auto'
                         />

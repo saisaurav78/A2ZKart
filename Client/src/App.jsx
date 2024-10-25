@@ -18,11 +18,15 @@ const App = () => {
   const [query, setQuery] = useState('');
 
   useEffect(() => {
-    setTransition(true);
-    const timeout = setTimeout(() => {
+    if (location.pathname === '/') {
+      setTransition(true);
+      const timeout = setTimeout(() => {
+        setTransition(false);
+      }, 1000);
+      return () => clearTimeout(timeout);
+    } else {
       setTransition(false);
-    }, 1000);
-    return () => clearTimeout(timeout); 
+    }
   }, [location]);
 
   const onInputChange = (newValue) => {
@@ -31,7 +35,7 @@ const App = () => {
 
   return (
     <>
-      {transition ? (
+      {transition && location.pathname==='/' ? (
         <div className='bg-customPalette-blue absolute w-full h-full z-20 flex justify-center items-center transition-all'>
           <div className='text-5xl animate-bounce text-customPalette-yellow font-medium'>
             A2ZKart

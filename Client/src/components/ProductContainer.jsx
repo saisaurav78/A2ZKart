@@ -17,8 +17,15 @@ const ProductContainer = (props) => {
         pauseOnHover: false,
       });
       let productdata= products.find((item)=>{return item.title ===e.target.parentElement.childNodes[0].textContent.trim();})
-      let cart= JSON.parse(localStorage.getItem("cart"))||[]
-      cart.push(productdata)
+      let cart = JSON.parse(localStorage.getItem("cart")) || []
+          const existingProduct = cart.find((item) => item.id === productdata.id);
+
+          if (existingProduct) {
+            existingProduct.quantity += 1;
+          } else {
+            productdata.quantity = 1;
+            cart.push(productdata);
+          }
       localStorage.setItem("cart", JSON.stringify(cart))
     }
   };

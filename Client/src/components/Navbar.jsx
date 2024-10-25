@@ -8,6 +8,13 @@ const Navbar = (props) => {
     props.onInputChange(query)
     setQuery('')
   }
+   const items = JSON.parse(localStorage.getItem('cart')) || [];
+   const [quantity] = useState(
+     items.reduce((accumulator, item) => accumulator + (item.quantity || 0), 0),
+   );
+
+  
+
 
   return (
     <header>
@@ -79,7 +86,7 @@ const Navbar = (props) => {
                   viewBox='0 0 24 24'
                   strokeWidth={1.5}
                   stroke='currentColor'
-                  className='w-6 h-6'
+                  className='w-7 h-7 '
                 >
                   <path
                     strokeLinecap='round'
@@ -88,6 +95,7 @@ const Navbar = (props) => {
                   />
                 </svg>
                 <span>Cart</span>
+                <span className='w-4 h-4 rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>{ quantity}</span>
               </NavLink>
             </li>
             <li>
