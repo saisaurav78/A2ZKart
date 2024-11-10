@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { userContext } from '../userContext';
+import SearchContext from '@/Contexts/searchContext';
 import axios from 'axios';
 
 const ProductCategory = () => {
-  const { selected, setSelected } = useContext(userContext);
+  const { selected, setSelected } = useContext(SearchContext);
   const [categories, setCategories] = useState([]);
 
 

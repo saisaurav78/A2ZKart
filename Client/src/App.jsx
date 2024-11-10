@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { userContext } from './userContext';
+import SearchContext from './Contexts/searchContext';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
@@ -32,7 +32,6 @@ const App = () => {
   const onInputChange = (newValue) => {
     setQuery(newValue);
   };
-
   return (
     <>
       {transition && location.pathname==='/' ? (

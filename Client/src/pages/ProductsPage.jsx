@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import ProductContainer from '../components/ProductContainer';
 import ProductCategory from '../components/ProductCategory';
-import { userContext } from '../userContext';
+import SearchContext from '@/Contexts/searchContext';
 
 const ProductsPage = (props) => {
   const [selected, setSelected] = useState('All');
 
   return (
-    <userContext.Provider value={{ selected, setSelected }}>
+    <SearchContext.Provider value={{ selected, setSelected }}>
       <div className='flex flex-col lg:flex-row'>
         <div className='lg:w-1/4 w-full p-4'>
           <ProductCategory />
@@ -16,7 +16,7 @@ const ProductsPage = (props) => {
           <ProductContainer searchQuery={props.searchQuery} />
         </div>
       </div>
-    </userContext.Provider>
+    </SearchContext.Provider>
   );
 };
 

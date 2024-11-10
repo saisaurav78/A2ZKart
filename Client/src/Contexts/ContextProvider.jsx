@@ -3,12 +3,12 @@ import CartReducer from './CartReducer';
 
 export const CartContext = createContext();
 
-const ContextProvider = ({ children }) => { // Accept props to destructure children
+const ContextProvider = ({ children }) => { 
     const [cart, dispatch] = useReducer(CartReducer, []);
   
     return (
         <CartContext.Provider value={{ cart, dispatch }}>
-            {children} {/* Render children */}
+            {children} 
         </CartContext.Provider>
     );
 }

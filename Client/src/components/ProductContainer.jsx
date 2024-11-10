@@ -1,34 +1,37 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { userContext } from '../userContext';
+import SearchContext from '@/Contexts/searchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import { ToastContainer, toast } from 'react-toastify';
+import { CartContext } from '@/Contexts/ContextProvider';
 
 const ProductContainer = (props) => {
-  const { selected } = useContext(userContext);
+  const {dispatch} = useContext(SearchContext)  
+  const { selected } = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const handleAddToCart = (e) => {
-    if (e.target.innerHTML === 'Add to Cart') {
-      toast('Added to Cart', {
-        theme: 'dark',
-        autoClose: 1000,
-        type: 'success',
-        pauseOnHover: false,
-      });
-      let productdata= products.find((item)=>{return item.title ===e.target.parentElement.childNodes[0].textContent.trim();})
-      let cart = JSON.parse(localStorage.getItem("cart")) || []
-          const existingProduct = cart.find((item) => item.id === productdata.id);
+  // const handleAddToCart = (e) => {
+  //   if (e.target.innerHTML === 'Add to Cart') {
+  //     toast('Added to Cart', {
+  //       theme: 'dark',
+  //       autoClose: 1000,
+  //       type: 'success',
+  //       pauseOnHover: false,
+  //     });
 
-          if (existingProduct) {
-            existingProduct.quantity += 1;
-          } else {
-            productdata.quantity = 1;
-            cart.push(productdata);
-          }
-      localStorage.setItem("cart", JSON.stringify(cart))
-    }
-  };
+  //     let productdata= products.find((item)=>{return item.title ===e.target.parentElement.childNodes[0].textContent.trim();})
+  //     let cart = JSON.parse(localStorage.getItem("cart")) || []
+  //         const existingProduct = cart.find((item) => item.id === productdata.id);
+
+  //         if (existingProduct) {
+  //           existingProduct.quantity += 1;
+  //         } else {
+  //           productdata.quantity = 1;
+  //           cart.push(productdata);
+  //         }
+  //     localStorage.setItem("cart", JSON.stringify(cart))
+  //   }
+  // };
   const loadProducts = async () => {
     let url;
     if (props.searchQuery) {
@@ -77,8 +80,11 @@ const handleSort = (e) => {
   return (
     <>
       {' '}
-      <div className='lg:relative text-xl m-5 flex lg:flex-row sm:flex-col sm:items-center justify-evenly flex-wrap lg:items-center sm:space-y-4 lg:space-y-0 lg:justify-between'>
-        <span className='text-customPalette-black text-base text-wrap lg:ml-40'>
+      <div
+        className='lg:relative text-xl m-5 flex lg:flex-row sm:flex-col sm:items-center justify-evenly flex-wrap lg:items-center sm:space-y-4 lg:space-y-0 
+      lg:justify-between sm:w-[40vw] md:w-[40vw] lg:w-[68vw] w-[40vw]'
+      >
+        <span className='text-customPalette-black text-base text-nowrap lg:ml-40'>
           Showing {products.length} products
         </span>
         <select
@@ -91,10 +97,26 @@ const handleSort = (e) => {
             Popular
           </option>
         </select>
+        <span className='lg:hidden ml-[100vw]'>
+          <svg
+            xmlns='http://www.w3.org/2000/svg'
+            fill='none'
+            viewBox='0 0 24 24'
+            strokeWidth={1.5}
+            stroke='currentColor'
+            className='size-6'
+          >
+            <path
+              strokeLinecap='round'
+              strokeLinejoin='round'
+              d='M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75'
+            />
+          </svg>
+        </span>
       </div>
       <main
         className='lg:w-[70vw] lg:mt-4 lg:m-10 lg:p-5 grid lg:grid-cols-3 gap-2
-       md:grid-cols-2 sm:grid-cols-1 sm:mt-10 sm:m-5'
+       md:grid-cols-2 sm:grid-cols-2 sm:mt-10 sm:m-5'
       >
         {loading ? (
           <Skeleton count={30} height={'max'} width={'60vw'} />
@@ -104,8 +126,7 @@ const handleSort = (e) => {
           products.map((product) => (
             <div
               key={product.id}
-              className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-5 shadow-lg border rounded-md transition-all'
-              onClick={handleAddToCart}
+              className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-5 shadow-md border rounded-md transition-all'
             >
               <span className='text-xl p-2 text-center font-medium text-customPalette-black'>
                 {product.title}
@@ -120,6 +141,9 @@ const handleSort = (e) => {
                 {'Price: $' + product.price}
               </span>
               <button
+                onClick={() => {
+                  dispatch({ type: 'Add', item: product });
+                }}
                 className='bg-customPalette-blue text-customPalette-white text-md font-medium rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow 
               hover:text-customPalette-black  transition-all '
               >
