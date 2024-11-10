@@ -3,46 +3,23 @@ import SearchContext from '@/Contexts/searchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import { ToastContainer, toast } from 'react-toastify';
-import { CartContext } from '@/Contexts/ContextProvider';
+import CartContext from '@/Contexts/CartContext';
 
 const ProductContainer = (props) => {
-  const {dispatch} = useContext(SearchContext)  
+  const { dispatch } = useContext(CartContext);
   const { selected } = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  // const handleAddToCart = (e) => {
-  //   if (e.target.innerHTML === 'Add to Cart') {
-  //     toast('Added to Cart', {
-  //       theme: 'dark',
-  //       autoClose: 1000,
-  //       type: 'success',
-  //       pauseOnHover: false,
-  //     });
 
-  //     let productdata= products.find((item)=>{return item.title ===e.target.parentElement.childNodes[0].textContent.trim();})
-  //     let cart = JSON.parse(localStorage.getItem("cart")) || []
-  //         const existingProduct = cart.find((item) => item.id === productdata.id);
-
-  //         if (existingProduct) {
-  //           existingProduct.quantity += 1;
-  //         } else {
-  //           productdata.quantity = 1;
-  //           cart.push(productdata);
-  //         }
-  //     localStorage.setItem("cart", JSON.stringify(cart))
-  //   }
-  // };
   const loadProducts = async () => {
     let url;
     if (props.searchQuery) {
       url = `https://dummyjson.com/products/search?q=${props.searchQuery}`;
-    }
-    else {
+    } else {
       if (selected === 'All') {
         url = `https://dummyjson.com/products/`;
-      }
-      else {
-         url = `https://dummyjson.com/products/category/${selected}`;
+      } else {
+        url = `https://dummyjson.com/products/category/${selected}`;
       }
     }
 
@@ -58,20 +35,18 @@ const ProductContainer = (props) => {
     }
   };
 
-  
-const handleSort = (e) => {
-  const value = e.target.value;
-  const sortedProducts = [...products].sort((a, b) => {
-    if (value === '<') {
-      return a.price - b.price;
-    } else if (value === '>') {
-      return b.price - a.price; 
-    }
-    return 0;
-  });
-  setProducts(sortedProducts);
-};
-
+  const handleSort = (e) => {
+    const value = e.target.value;
+    const sortedProducts = [...products].sort((a, b) => {
+      if (value === '<') {
+        return a.price - b.price;
+      } else if (value === '>') {
+        return b.price - a.price;
+      }
+      return 0;
+    });
+    setProducts(sortedProducts);
+  };
 
   useEffect(() => {
     loadProducts();
@@ -93,7 +68,7 @@ const handleSort = (e) => {
         >
           <option value='>'>Price High to Low</option>
           <option value='<'>Price Low to High</option>
-          <option value='' selected>
+          <option value=''>
             Popular
           </option>
         </select>
@@ -142,7 +117,14 @@ const handleSort = (e) => {
               </span>
               <button
                 onClick={() => {
+                     toast('Added to Cart', {
+                       theme: 'dark',
+                       autoClose: 1000,
+                       type: 'success',
+                       pauseOnHover: false,
+                     });
                   dispatch({ type: 'Add', item: product });
+               
                 }}
                 className='bg-customPalette-blue text-customPalette-white text-md font-medium rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow 
               hover:text-customPalette-black  transition-all '

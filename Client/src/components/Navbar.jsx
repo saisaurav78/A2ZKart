@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import {React, useContext} from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Sheet,
@@ -8,12 +8,13 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import CartContext from '@/Contexts/CartContext';
+
 
 
 const Navbar = () => {
-  // const { cart } = useContext(CartContext);
-  // const { query, setQuery } = useContext(SearchContext);
-  
+  const { cart } = useContext(CartContext);
+
 
   return (
     <header>
@@ -24,7 +25,7 @@ const Navbar = () => {
                 A2ZKart
             </NavLink>
           </div>
-          <form className='flex items-center space-x-2 max-w-md w-[45vw]' role='search'>
+          <form className='flex items-center space-x-2 max-w-sm w-[54vw]' role='search'>
             <label htmlFor='search' className='sr-only'>
               Search
             </label>
@@ -60,7 +61,7 @@ const Navbar = () => {
           </form>
 
           <ul
-            className='lg:flex items-center justify-evenly w-[35vw] space-x-14 hidden'
+            className='lg:flex items-center justify-around w-[48vw] hidden'
             role='navigation'
           >
             <li>
@@ -93,7 +94,7 @@ const Navbar = () => {
                   />
                 </svg>
                 <span>Cart</span>
-                <span className='w-4 h-4 rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'></span>
+                <span className='h-4 w-4  rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>{ cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}</span>
               </NavLink>
             </li>
             <li>
@@ -142,7 +143,7 @@ const Navbar = () => {
           </ul>
           <span className='lg:hidden'>
             <Sheet>
-              <SheetTrigger aria-label='Open Menu'>
+              <SheetTrigger aria-label='Open Menu' className='text-customPalette-red p-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'
                   fill='none'
@@ -192,7 +193,7 @@ const Navbar = () => {
                           />
                         </svg>
                         <span>Cart</span>
-                        <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'></span>
+                        <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>{cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}</span>
                       </NavLink>
                     </li>
                     <li className='text-customPalette-white'>

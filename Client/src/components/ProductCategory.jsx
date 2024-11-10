@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import SearchContext from '@/Contexts/searchContext';
+import SearchContext from '@/Contexts/SearchContext';
 import axios from 'axios';
 
 const ProductCategory = () => {

@@ -1,20 +1,33 @@
 const Cartreducer = (state, action) => {
-    switch (action.type) {
-        case 'Add':
-            const existingProduct = state.findIndex(item => item.id === action.item.id)
-             if (existingProduct !== -1) {
-               const updatedCart = [...state];
-               updatedCart[existingProduct].quantity += 1;
-               return updatedCart;
-             } else {
-               return [...state, { ...action.item, quantity: 1 }];
-             }
-        case 'Remove':
-        case 'Increase':
-        case 'Decrease':
-        default:
-            return state;
+  switch (action.type) {
+    case 'Add':
+      const existingProductIndex = state.findIndex((item) => item.id === action.item.id);
+      if (existingProductIndex !== -1) {
+        return state.map((item, index) =>
+          index === existingProductIndex ? { ...item, quantity: item.quantity + 1 } : item,
+        );
+      } else {
+        return [...state, { ...action.item, quantity: 1 }];
+      }
 
-    }
-}
+    case 'Remove':
+      return state.filter((item) => item.id !== action.item.id);
+
+    case 'Increase':
+      return state.map((item) =>
+        item.id === action.item.id ? { ...item, quantity: item.quantity + 1 } : item,
+      );
+
+    case 'Decrease':
+      return state
+        .map((item) =>
+          item.id === action.item.id ? { ...item, quantity: item.quantity - 1 } : item,
+        )
+        .filter((item) => item.quantity > 0);
+
+    default:
+      return state;
+  }
+};
+
 export default Cartreducer;
