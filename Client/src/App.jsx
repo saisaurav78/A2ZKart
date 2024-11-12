@@ -4,7 +4,6 @@ import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import CartPage from './pages/CartPage';
 import RegisterPage from './pages/RegisterPage';
-import DetailPage from './pages/DetailPage';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
@@ -48,7 +47,6 @@ const App = () => {
             <Route path='/cart' element={<CartPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
-            <Route path='/productdetail' element={<DetailPage />} />
           </Routes>
           <Footer />
         </>

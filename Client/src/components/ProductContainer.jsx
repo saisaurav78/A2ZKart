@@ -6,25 +6,25 @@ import { ToastContainer, toast } from 'react-toastify';
 import CartContext from '../Contexts/CartContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
 
-const ProductContainer = (props) => {
+const ProductContainer = () => {
   const { dispatch } = useContext(CartContext);
-  const { selected } = useContext(SearchContext);
+  const { query, selected} = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const {setVisible}=useContext(VisibilityContext) 
+  const { setVisible } = useContext(VisibilityContext) 
+  const [count, setCount] = useState(1);
   
-
   const loadProducts = async () => {
     let url;
-    if (props.searchQuery) {
-      url = `https://dummyjson.com/products/search?q=${props.searchQuery}`;
-    } else {
-      if (selected === 'All') {
-        url = `https://dummyjson.com/products/`;
+      if (query) {
+        url = `https://dummyjson.com/products/search?q=${query}`;
       } else {
-        url = `https://dummyjson.com/products/category/${selected}`;
+        if (selected === 'All') {
+          url = `https://dummyjson.com/products/`;
+        } else {
+          url = `https://dummyjson.com/products/category/${selected}`;
+        }
       }
-    }
 
     try {
       setLoading(true);
@@ -53,8 +53,7 @@ const ProductContainer = (props) => {
 
   useEffect(() => {
     loadProducts();
-  }, [selected, props.searchQuery]);
-
+  }, [selected, query, count]);
   return (
     <>
       {' '}
@@ -63,7 +62,7 @@ const ProductContainer = (props) => {
       lg:justify-between sm:w-[40vw] md:w-[40vw] lg:w-[68vw] w-[40vw]'
       >
         <span className='text-customPalette-black text-base text-nowrap lg:ml-40'>
-          Showing {products.length} products
+          Showing { products.length} products
         </span>
 
         <select
@@ -76,7 +75,7 @@ const ProductContainer = (props) => {
         </select>
         <span
           onClick={() => {
-            setVisible(true)
+            setVisible(true);
           }}
           className='lg:hidden ml-[100vw] sm:ml-[80vw] md:ml-[80vw]'
         >
@@ -142,6 +141,7 @@ const ProductContainer = (props) => {
         )}
       </main>
       <ToastContainer />
+     
     </>
   );
 };

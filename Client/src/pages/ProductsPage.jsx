@@ -16,24 +16,20 @@ import {
 } from '@/components/ui/drawer';
 
 
-const ProductsPage = (props) => {
-  const [selected, setSelected] = useState('All');
+const ProductsPage = () => {
  const { visible, setVisible } = useContext(VisibilityContext);
 
   return (
     <>
-      <SearchContext.Provider value={{ selected, setSelected }}>
         <div className='flex flex-col lg:flex-row'>
           <div className='lg:w-1/4 w-full p-4'>
             <ProductCategory />
           </div>
           {visible && (
             <Drawer open={visible} onOpenChange={() => setVisible(false)}>
-              {' '}
-              
               <DrawerContent>
                 <DrawerHeader>
-                  <DrawerTitle className='text-customPalette-white'>sdsdsdsd</DrawerTitle>
+                  <DrawerTitle className='text-customPalette-white'>drawer title</DrawerTitle>
                   <DrawerDescription>This action cannot be undone.</DrawerDescription>
                 </DrawerHeader>
                 <DrawerFooter>
@@ -44,10 +40,9 @@ const ProductsPage = (props) => {
             </Drawer>
           )}
           <div className='lg:w-3/4 w-full p-4'>
-            <ProductContainer searchQuery={props.searchQuery} />
+            <ProductContainer />
           </div>
         </div>
-      </SearchContext.Provider>
     </>
   );
 };

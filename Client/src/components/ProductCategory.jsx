@@ -3,7 +3,7 @@ import SearchContext from '@/Contexts/SearchContext';
 import axios from 'axios';
 
 const ProductCategory = () => {
-  const { selected, setSelected } = useContext(SearchContext);
+  const { selected, setSelected, setQuery} = useContext(SearchContext);
   const [categories, setCategories] = useState([]);
 
 
@@ -41,7 +41,11 @@ const ProductCategory = () => {
           </label>
           <input
             className='w-5 h-5 ml-2'
-            onChange={() => setSelected('All')}
+            onChange={() => {
+              setSelected('All')
+              setQuery('')
+            }
+            }
             value={'All'}
             checked={selected === 'All'}
             type='radio'
@@ -65,7 +69,10 @@ const ProductCategory = () => {
               </label>
               <input
                 className='w-5 h-5 ml-2'
-                onChange={() => setSelected(category)}
+                onChange={() => {
+                  setSelected(category) 
+                  setQuery('')
+                }}
                 value={category}
                 checked={selected === category}
                 type='radio'

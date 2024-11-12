@@ -1,4 +1,4 @@
-import {React, useContext} from 'react';
+import {React, useContext, useState} from 'react';
 import { NavLink } from 'react-router-dom';
 import {
   Sheet,
@@ -8,13 +8,42 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
+
 import CartContext from '@/Contexts/CartContext';
+import SearchContext from '@/Contexts/SearchContext';
+import { useNavigate } from 'react-router-dom';
 
 
 
 const Navbar = () => {
+  const navigate = useNavigate()
   const { cart } = useContext(CartContext);
-
+  const {setQuery } = useContext(SearchContext)
+  const [inputValue, setInputValue] = useState('');
+  
+  const handleInputChange = (e) => {
+      navigate('/products');
+      setInputValue(e.target.value);
+    };
+  
+  
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      setQuery(inputValue);
+      setInputValue(''); 
+      setSearchQuery(''); 
+    };
 
   return (
     <header>
@@ -22,10 +51,14 @@ const Navbar = () => {
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
           <div className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-yellow'>
             <NavLink to='/' aria-label='Homepage'>
-                A2ZKart
+              A2ZKart
             </NavLink>
           </div>
-          <form className='flex items-center space-x-2 max-w-sm w-[54vw]' role='search'>
+          <form
+            className='flex items-center space-x-2 max-w-sm w-[54vw]'
+            role='search'
+            onSubmit={handleSubmit}
+          >
             <label htmlFor='search' className='sr-only'>
               Search
             </label>
@@ -36,6 +69,8 @@ const Navbar = () => {
               placeholder='Search...'
               className='border border-customPalette-blue rounded-md h-10 w-[100%] text-lg text-customPalette-black px-2 
               focus:outline-none focus:border-customPalette-yellow'
+              value={inputValue}
+              onChange={handleInputChange}
             />
             <button
               type='submit'
@@ -60,10 +95,7 @@ const Navbar = () => {
             </button>
           </form>
 
-          <ul
-            className='lg:flex items-center justify-around w-[48vw] hidden'
-            role='navigation'
-          >
+          <ul className='lg:flex items-center justify-around w-[48vw] hidden' role='navigation'>
             <li>
               <NavLink
                 to='/products'
@@ -94,7 +126,9 @@ const Navbar = () => {
                   />
                 </svg>
                 <span>Cart</span>
-                <span className='h-4 w-auto min-w-4 rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>{ cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}</span>
+                <span className='h-4 w-auto min-w-4 rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
+                  {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
+                </span>
               </NavLink>
             </li>
             <li>
@@ -118,27 +152,39 @@ const Navbar = () => {
                 <span>Signin</span>
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to='/notifications'
-                className='flex items-center space-x-1 hover:text-customPalette-blue'
-                aria-label='View Notifications'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='currentColor'
-                  viewBox='0 0 24 24'
-                  className='w-6 h-6'
-                >
-                  <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
-                  <path
-                    fillRule='evenodd'
-                    d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                <span>Notifications</span>
-              </NavLink>
+            <li
+              title='notifications'
+              className='flex items-center space-x-1 hover:text-customPalette-blue cursor-pointer'
+            >
+              <AlertDialog>
+                <AlertDialogTrigger className='flex'>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                    className='w-6 h-6'
+                  >
+                    <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
+                    <path
+                      fillRule='evenodd'
+                      d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                  Notifications
+                </AlertDialogTrigger>
+                <AlertDialogContent className='bg-customPalette-white text-customPalette-black'>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>There are no notifications</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      We'll notify you when there are notifications
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Ok</AlertDialogCancel>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </li>
           </ul>
           <span className='lg:hidden'>
@@ -193,7 +239,9 @@ const Navbar = () => {
                           />
                         </svg>
                         <span>Cart</span>
-                        <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>{cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}</span>
+                        <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
+                          {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
+                        </span>
                       </NavLink>
                     </li>
                     <li className='text-customPalette-white'>
@@ -217,27 +265,39 @@ const Navbar = () => {
                         <span>Sign In</span>
                       </NavLink>
                     </li>
-                    <li className='text-customPalette-red'>
-                      <NavLink
-                        to='/notifications'
-                        className='flex items-center space-x-2 hover:text-customPalette-blue'
-                        aria-label='View Notifications'
-                      >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='currentColor'
-                          viewBox='0 0 24 24'
-                          className='w-6 h-6'
-                        >
-                          <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
-                          <path
-                            fillRule='evenodd'
-                            d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
-                            clipRule='evenodd'
-                          />
-                        </svg>
-                        <span>Notifications</span>
-                      </NavLink>
+                    <li
+                      title='notifications'
+                      className='flex items-center space-x-1 hover:text-customPalette-blue cursor-pointer'
+                    >
+                      <AlertDialog>
+                        <AlertDialogTrigger className='flex'>
+                          <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            fill='currentColor'
+                            viewBox='0 0 24 24'
+                            className='w-6 h-6'
+                          >
+                            <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
+                            <path
+                              fillRule='evenodd'
+                              d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
+                              clipRule='evenodd'
+                            />
+                          </svg>
+                          Notifications
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className='bg-customPalette-white text-customPalette-black'>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>There are no notifications</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              We'll notify you when there are notifications
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Ok</AlertDialogCancel>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </li>
                   </SheetDescription>
                 </SheetHeader>
