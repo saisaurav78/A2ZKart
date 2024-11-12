@@ -1,15 +1,18 @@
 import React, { useEffect, useState, useContext } from 'react';
-import SearchContext from '@/Contexts/searchContext';
+import  SearchContext  from '@/Contexts/SearchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import { ToastContainer, toast } from 'react-toastify';
-import CartContext from '@/Contexts/CartContext';
+import CartContext from '../Contexts/CartContext';
+import VisibilityContext from '@/Contexts/VisibilityContext';
 
 const ProductContainer = (props) => {
   const { dispatch } = useContext(CartContext);
   const { selected } = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const {setVisible}=useContext(VisibilityContext) 
+  
 
   const loadProducts = async () => {
     let url;
@@ -62,17 +65,21 @@ const ProductContainer = (props) => {
         <span className='text-customPalette-black text-base text-nowrap lg:ml-40'>
           Showing {products.length} products
         </span>
+
         <select
           className='font-1 h-12 bg-customPalette-white text-xl font-normal sm:w-full lg:w-auto'
           onChange={handleSort}
         >
           <option value='>'>Price High to Low</option>
           <option value='<'>Price Low to High</option>
-          <option value=''>
-            Popular
-          </option>
+          <option value=''>Popular</option>
         </select>
-        <span className='lg:hidden ml-[100vw]'>
+        <span
+          onClick={() => {
+            setVisible(true)
+          }}
+          className='lg:hidden ml-[100vw] sm:ml-[80vw] md:ml-[80vw]'
+        >
           <svg
             xmlns='http://www.w3.org/2000/svg'
             fill='none'
@@ -96,7 +103,7 @@ const ProductContainer = (props) => {
         {loading ? (
           <Skeleton count={30} height={'max'} width={'60vw'} />
         ) : products.length <= 0 ? (
-          <div className='text-5xl text-center p-10 text-nowrap m-40'>No products found</div>
+          <div className='m-auto mt-[20vh] lg:m-auto text-nowrap text-4xl'>No products found</div>
         ) : (
           products.map((product) => (
             <div
@@ -117,14 +124,13 @@ const ProductContainer = (props) => {
               </span>
               <button
                 onClick={() => {
-                     toast('Added to Cart', {
-                       theme: 'dark',
-                       autoClose: 1000,
-                       type: 'success',
-                       pauseOnHover: false,
-                     });
+                  toast('Added to Cart', {
+                    theme: 'dark',
+                    autoClose: 1000,
+                    type: 'success',
+                    pauseOnHover: false,
+                  });
                   dispatch({ type: 'Add', item: product });
-               
                 }}
                 className='bg-customPalette-blue text-customPalette-white text-md font-medium rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow 
               hover:text-customPalette-black  transition-all '

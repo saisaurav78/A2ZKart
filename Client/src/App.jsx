@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import SearchContext from './Contexts/searchContext';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';

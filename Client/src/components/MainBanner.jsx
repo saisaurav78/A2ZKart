@@ -1,8 +1,6 @@
-import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import React from 'react'
 
 const MainBanner = () => {
-  const [visible,setVisible]= useState('hidden')
     return (
       <>
         <section

@@ -36,10 +36,9 @@ const CartPage = () => {
       >
         {cart.length > 0 ? (
           <>
-            <div className='col-span-1 row-span-2'>
+            <div className='lg:col-span-1 lg:row-span-2'>
               <span className='text-4xl text-center m-5 block'>Your Cart</span>
-              <hr />
-              <table className='shadow-md m-5 lg:w-[50vw] sm:mt-20'>
+              <table className='shadow-md lg:m-5 lg:w-[50vw] lg:max-w-[50vw]'>
                 <thead>
                   <tr>
                     <th className='px-4 py-2'>Item</th>
@@ -120,7 +119,8 @@ const CartPage = () => {
               </table>
             </div>
 
-            <div className='col-start-2 lg:flex lg:flex-col lg:mx-28 m-20 lg:gap-6 sm:gap-8 row-end-3 text-customPalette-black'>
+            <div className='col-start-2 lg:flex lg:flex-col lg:mx-28 lg:m-20 lg:gap-6 sm:gap-8 row-end-3 text-customPalette-black
+            lg:space-y-0 space-y-9 m-9'>
               <span className='self-start text-xl text-customPalette-blue'>
                 Sub Total: $ {Math.ceil(cartTotal)}
               </span>
@@ -137,7 +137,7 @@ const CartPage = () => {
 
               <input
                 placeholder='Coupon Code'
-                className='border-none p-1 outline-none text-customPalette-blue'
+                className='border-none p-1 md:w-[100%] sm:w-[100%] outline-none text-customPalette-blue'
                 type='text'
                 onChange={(e) => {
                   handleDiscount(e);
@@ -151,7 +151,7 @@ const CartPage = () => {
               </span>
               <button
                 className='border-none bg-customPalette-blue text-xl text-customPalette-white shadow-md p-3
-              hover:bg-customPalette-yellow hover:text-customPalette-black transition-all '
+              hover:bg-customPalette-yellow hover:text-customPalette-black transition-all lg:mx-0 w-[100%]'
               >
                 Checkout
               </button>
@@ -159,7 +159,7 @@ const CartPage = () => {
           </>
         ) : (
           <div className='col-span-2 m-16 flex flex-col items-center justify-center'>
-            <span className='text-4xl font-sans'>Your Cart is Empty</span>
+            <span className='text-4xl font-sans text-nowrap'>Your Cart is Empty</span>
             <svg
               xmlns='http://www.w3.org/2000/svg'
               enable-background='new 0 0 1500 1500'
