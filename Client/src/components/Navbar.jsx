@@ -42,11 +42,10 @@ const Navbar = () => {
       e.preventDefault();
       setQuery(inputValue);
       setInputValue(''); 
-      setSearchQuery(''); 
     };
 
   return (
-    <header>
+    <header className='sticky top-0 z-10'>
       <nav className='bg-customPalette-white shadow-lg w-full lg:flex'>
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
           <div className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-yellow'>
