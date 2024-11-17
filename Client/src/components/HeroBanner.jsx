@@ -1,13 +1,12 @@
 import React from 'react'
 
-const MainBanner = () => {
+const HeroBanner = () => {
     return (
       <>
         <section
           className='w-full h-full flex 
          flex-col items-center justify-center mt-5'
         >
-          <span className='text-4xl font-medium p-0 text-customPalette-blue'>A2ZKart</span>
           <svg
             xmlns='http://www.w3.org/2000/svg'
             enable-background='new 0 0 5250 3000'
@@ -217,7 +216,7 @@ const MainBanner = () => {
               clip-rule='evenodd'
             />
           </svg>
-          <span className='text-4xl font-normal text-customPalette-black p-5'>
+          <span className='text-3xl text-customPalette-black p-5'>
             Your One Stop Shopping Site
           </span>
           <span
@@ -226,10 +225,11 @@ const MainBanner = () => {
           >
             Explore
           </span>
+          <div className='container'></div>
         </section>
       </>
     );
 
 }
 
-export default MainBanner
+export default HeroBanner

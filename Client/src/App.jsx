@@ -11,7 +11,7 @@ import Footer from './components/Footer';
 import ProductsPage from './pages/ProductsPage';
 
 const App = () => {
-  const [transition, setTransition] = useState(false);
+  const [transition, setTransition] = useState(true);
   const location = useLocation();
   const [query, setQuery] = useState('');
 
@@ -20,7 +20,7 @@ const App = () => {
       setTransition(true);
       const timeout = setTimeout(() => {
         setTransition(false);
-      }, 1000);
+      }, 1500);
       return () => clearTimeout(timeout);
     } else {
       setTransition(false);

@@ -1,5 +1,6 @@
-import {React, useContext, useState} from 'react';
+import {React, useContext, useState, useEffect} from 'react';
 import { NavLink } from 'react-router-dom';
+import AuthContext from '@/Contexts/AuthContext';
 import {
   Sheet,
   SheetContent,
@@ -23,6 +24,8 @@ import {
 import CartContext from '@/Contexts/CartContext';
 import SearchContext from '@/Contexts/SearchContext';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 
 
 
@@ -31,13 +34,21 @@ const Navbar = () => {
   const { cart } = useContext(CartContext);
   const {setQuery } = useContext(SearchContext)
   const [inputValue, setInputValue] = useState('');
+  const [open, setOpen] = useState()
+  const location = useLocation();
+
+  const { user } = useContext(AuthContext)
+
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
   
   const handleInputChange = (e) => {
       navigate('/products');
       setInputValue(e.target.value);
     };
-  
-  
+ 
     const handleSubmit = (e) => {
       e.preventDefault();
       setQuery(inputValue);
@@ -48,7 +59,7 @@ const Navbar = () => {
     <header className='sticky top-0 z-10'>
       <nav className='bg-customPalette-white shadow-lg w-full lg:flex'>
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
-          <div className='text-customPalette-blue text-2xl font-semibold hover:text-customPalette-yellow'>
+          <div className='text-customPalette-blue text-3xl font-semibold hover:text-customPalette-yellow'>
             <NavLink to='/' aria-label='Homepage'>
               A2ZKart
             </NavLink>
@@ -148,7 +159,7 @@ const Navbar = () => {
                     clipRule='evenodd'
                   />
                 </svg>
-                <span>Signin</span>
+                {user ? <span>{user}</span> : <span>Signin</span>}
               </NavLink>
             </li>
             <li
@@ -187,7 +198,7 @@ const Navbar = () => {
             </li>
           </ul>
           <span className='lg:hidden'>
-            <Sheet>
+            <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger aria-label='Open Menu' className='text-customPalette-red p-4'>
                 <svg
                   xmlns='http://www.w3.org/2000/svg'

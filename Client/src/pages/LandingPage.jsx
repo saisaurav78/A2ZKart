@@ -1,5 +1,5 @@
 import React from 'react'
-import MainBanner from '../components/MainBanner'
+import HeroBanner from '../components/HeroBanner'
  
 import {
   Carousel,
@@ -13,7 +13,7 @@ const LandingPage = () => {
   return (
     <>
       {' '}
-      <MainBanner />
+      <HeroBanner />
     </>
   );
 }
