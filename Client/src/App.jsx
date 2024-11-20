@@ -9,6 +9,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Footer from './components/Footer';
 import ProductsPage from './pages/ProductsPage';
+import CheckoutPage from './pages/CheckoutPage';
 
 const App = () => {
   const [transition, setTransition] = useState(true);
@@ -47,6 +48,7 @@ const App = () => {
             <Route path='/cart' element={<CartPage />} />
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<RegisterPage />} />
+            <Route path='/checkout' element={<CheckoutPage />} />
           </Routes>
           <Footer />
         </>

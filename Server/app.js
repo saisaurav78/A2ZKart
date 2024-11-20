@@ -4,6 +4,7 @@ import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import userRoute from './routes/userRoute.js'
 import DBconnect from './config/config.js'
+import Auth from './middleware/Auth.js'
 
 const app = express()
 dotenv.config()
@@ -14,8 +15,9 @@ const PORT = process.env.PORT||8080
 
 DBconnect()
 
-
 app.use('/api/user', userRoute)
+
+
 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`)

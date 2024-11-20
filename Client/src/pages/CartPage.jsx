@@ -1,5 +1,7 @@
+import AuthContext from '@/Contexts/AuthContext';
 import CartContext from '@/Contexts/CartContext';
 import React, { useEffect, useState, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -7,7 +9,9 @@ const CartPage = () => {
   const { cart } = useContext(CartContext)
   const { dispatch } = useContext(CartContext)
   const [discount, setDiscount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
+  const { auth } = useContext(AuthContext)
+  const {cartTotal, setCartTotal} = useContext(CartContext);
+  const navigate = useNavigate()
 
   const handleDiscount = (e) => {
     if (e.target.value === 'WELCOME10') {
@@ -150,6 +154,13 @@ const CartPage = () => {
                 Total: $ {Math.ceil((cartTotal + 5) * ((100 - discount) / 100))}
               </span>
               <button
+                onClick={
+                  
+                  () => {
+                    auth ? navigate('/checkout') : navigate('/login') 
+                    setCartTotal(Math.ceil((cartTotal + 5) * ((100 - discount) / 100)));
+                  }
+                }
                 className='border-none bg-customPalette-blue text-xl text-customPalette-white shadow-md p-3
               hover:bg-customPalette-yellow hover:text-customPalette-black transition-all lg:mx-0 w-[100%]'
               >

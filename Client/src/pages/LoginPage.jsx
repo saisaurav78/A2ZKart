@@ -1,19 +1,22 @@
 import axios from 'axios';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
+
 import AuthContext from '@/Contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import CartContext from '@/Contexts/CartContext';
 
 
 const LoginPage = () => {
+  const { cart } = useContext(CartContext)
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailValid, setEmailValid] = useState(false);
   const [passwordValid, setPasswordValid] = useState(false);
   const [error, setError] = useState('');
-  const [message,setMessage]=useState('')
   const [loading, setLoading] = useState(false)
-  const {setToken, setUser } = useContext(AuthContext)
+  const { setAuth } = useContext(AuthContext)
+  const navigate = useNavigate()
   
   
 
@@ -22,12 +25,12 @@ const LoginPage = () => {
  const handleLogin = async (e) => {
    e.preventDefault();
    setError('');
-    setToken(null);
-   setMessage('');
+    setAuth(false);
    setLoading(true);
 
    if (!emailValid || !passwordValid) {
      setError('Please ensure all fields are valid.');
+     setAuth(false)
      setLoading(false);
      return;
    }
@@ -37,11 +40,13 @@ const LoginPage = () => {
        email,
        password,
      });
-     setMessage(response.data.message); 
-     setToken(response.data.token)
-     setUser(response.data.user)
+     setAuth(true)
+     alert(response.data.message)
+     { cart.length > 0 ? navigate('/checkout') : navigate('/products') }
+
+     
    } catch (err) {
-     setToken(null)
+     setAuth(false)
      if (err.response && err.response.data) {
        setError(err.response.data.message || 'Login failed. Please try again.');
      } else {
@@ -57,11 +62,9 @@ const LoginPage = () => {
     <section className='w-full h-full flex items-center justify-center'>
       <form
         onSubmit={handleLogin}
-        className='lg:w-1/3 md:w-1/2 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'
-      >
+        className='lg:w-1/3 md:w-1/2 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'>
         <span className='text-customPalette-black text-xl font-medium title-font mb-5'>Sign in</span>
         {error && <span className='text-customPalette-red text-md mb-4'>{error}</span>}
-        {message && <span className='text-green-500 text-md mb-4'>{message}</span>}
         <div className='relative mb-4'>
           <label htmlFor='email' className='text-md text-customPalette-black'>
             Email
