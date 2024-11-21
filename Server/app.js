@@ -5,11 +5,17 @@ import cors from 'cors'
 import userRoute from './routes/userRoute.js'
 import DBconnect from './config/config.js'
 import Auth from './middleware/Auth.js'
+import authRoute from './routes/authRoute.js'
 
 const app = express()
-dotenv.config()
-app.use(cors())
 app.use(cookieParser())
+dotenv.config()
+app.use(cors(
+    {
+        origin: 'http://localhost:5173',
+        credentials:true
+    }
+))
 app.use(express.json())
 const PORT = process.env.PORT||8080
 
@@ -17,7 +23,7 @@ DBconnect()
 
 app.use('/api/user', userRoute)
 
-
+app.use('/api/auth', authRoute)
 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`)

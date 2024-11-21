@@ -1,5 +1,6 @@
 import {React, useContext, useState, useEffect} from 'react';
 import { NavLink } from 'react-router-dom';
+import DropDown from './DropDown';
 import AuthContext from '@/Contexts/AuthContext';
 import {
   Sheet,
@@ -35,10 +36,9 @@ const Navbar = () => {
   const {setQuery } = useContext(SearchContext)
   const [inputValue, setInputValue] = useState('');
   const [open, setOpen] = useState()
-  const location = useLocation();
-
-  const { user } = useContext(AuthContext)
-
+  const location = useLocation()
+  const {auth, user } = useContext(AuthContext)
+  
   useEffect(() => {
     setOpen(false);
   }, [location.pathname]);
@@ -59,7 +59,7 @@ const Navbar = () => {
     <header className='sticky top-0 z-10'>
       <nav className='bg-customPalette-white shadow-lg w-full lg:flex'>
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
-          <div className='text-customPalette-blue text-3xl font-semibold hover:text-customPalette-yellow'>
+          <div className='text-customPalette-blue lg:text-3xl text-2xl font-semibold hover:text-customPalette-yellow'>
             <NavLink to='/' aria-label='Homepage'>
               A2ZKart
             </NavLink>
@@ -136,31 +136,31 @@ const Navbar = () => {
                   />
                 </svg>
                 <span>Cart</span>
-                <span className='h-4 w-auto min-w-4 rounded-[50%] bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
+                <span className='h-4 w-auto min-w-4 rounded-[50%] bg-customPalette-black font-semibold flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
                   {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
                 </span>
               </NavLink>
             </li>
-            <li>
-              <NavLink
-                to='/login'
-                className='flex items-center space-x-1 hover:text-customPalette-blue'
-                aria-label='Sign In'
-              >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='currentColor'
-                  viewBox='0 0 24 24'
-                  className='w-6 h-6'
-                >
-                  <path
-                    fillRule='evenodd'
-                    d='M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z'
-                    clipRule='evenodd'
-                  />
-                </svg>
-                {user ? <span>{user}</span> : <span>Signin</span>}
-              </NavLink>
+            <li className='flex'>
+              {auth ? (
+              <DropDown trigger={user}/>
+              ) : (
+                <NavLink to={'/login'} className={'flex'}>
+                  <svg
+                    xmlns='http://www.w3.org/2000/svg'
+                    fill='currentColor'
+                    viewBox='0 0 24 24'
+                    className='w-6 h-6'
+                  >
+                    <path
+                      fillRule='evenodd'
+                      d='M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z'
+                      clipRule='evenodd'
+                    />
+                  </svg>
+                  Login
+                </NavLink>
+              )}
             </li>
             <li
               title='notifications'

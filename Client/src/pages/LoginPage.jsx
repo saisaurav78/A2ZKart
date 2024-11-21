@@ -25,26 +25,22 @@ const LoginPage = () => {
  const handleLogin = async (e) => {
    e.preventDefault();
    setError('');
-    setAuth(false);
    setLoading(true);
 
    if (!emailValid || !passwordValid) {
      setError('Please ensure all fields are valid.');
-     setAuth(false)
      setLoading(false);
      return;
    }
 
    try {
-     const response = await axios.post('http://localhost:8080/api/user/login', {
-       email,
-       password,
-     });
-     setAuth(true)
+     const response = await axios.post('http://localhost:8080/api/user/login',{ email,password}, { withCredentials: true });
      alert(response.data.message)
-     { cart.length > 0 ? navigate('/checkout') : navigate('/products') }
+     if (response.status === 200) {
+       setAuth(true);
+    {cart.length>0 ? navigate('/checkout') : navigate('/products')}
+   }
 
-     
    } catch (err) {
      setAuth(false)
      if (err.response && err.response.data) {

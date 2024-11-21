@@ -14,7 +14,7 @@ createRoot(document.getElementById('root')).render(
         <SearchContextProvider>
           <VisibilityContextProvider>
             <AuthContextProvider>
-            <App />
+                <App />
             </AuthContextProvider>
           </VisibilityContextProvider>
         </SearchContextProvider>

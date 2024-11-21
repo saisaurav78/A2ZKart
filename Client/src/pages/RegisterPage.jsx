@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 
 
 const RegisterPage = () => {
+  const navigate = useNavigate()
   const [username,setUsername] = useState('')
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -13,13 +15,11 @@ const RegisterPage = () => {
   const [passwordValid, setPasswordValid] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(false);
   const [error, setError] = useState('');
-  const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setError('');
-    setMessage('')
     setLoading(true)
 
     if (!emailValid || !passwordValid || !passwordsMatch || !username) {
@@ -29,19 +29,12 @@ const RegisterPage = () => {
     }
 
     try {
-     // Make API request
-      const response = await axios.post('http://localhost:8080/api/user/register',
-        {
-          username,
-       email,
-       password,
-     });
-
-     // Handle success
-     setMessage(response.data.message); // Assuming API sends a success message
-     console.log(response.data);
+      const response = await axios.post('http://localhost:8080/api/user/register', { username, email, password, });
+      alert(response.data.message); 
+       if (response.status === 201) {
+        navigate('/login')
+       }
    } catch (err) {
-     // Handle errors gracefully
      if (err.response && err.response.data) {
        setError(err.response.data.message || 'Login failed. Please try again.');
      } else {
@@ -63,7 +56,6 @@ const RegisterPage = () => {
           Register
         </span>
         {error && <span className='text-customPalette-red text-md mb-4'>{error}</span>}
-        {message && <span className='text-green-500 text-md mb-4'>{message}</span>}
         <div className='relative mb-4'>
           <label htmlFor='username' className='text-customPalette-black text-md'>
             username
