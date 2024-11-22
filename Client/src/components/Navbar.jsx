@@ -109,7 +109,7 @@ const Navbar = () => {
             <li>
               <NavLink
                 to='/products'
-                className='hover:text-customPalette-blue'
+                className='hover:text-customPalette-red'
                 aria-label='View Products'
               >
                 Products
@@ -141,11 +141,11 @@ const Navbar = () => {
                 </span>
               </NavLink>
             </li>
-            <li className='flex'>
+            <li className=''>
               {auth ? (
               <DropDown trigger={user}/>
               ) : (
-                <NavLink to={'/login'} className={'flex'}>
+                <NavLink to={'/login'} className={'flex hover:text-customPalette-red'}>
                   <svg
                     xmlns='http://www.w3.org/2000/svg'
                     fill='currentColor'

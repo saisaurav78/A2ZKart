@@ -1,9 +1,85 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+import AuthContext from '@/Contexts/AuthContext';
 
 const CheckoutPage = () => {
+  const navigate = useNavigate()
+  const {auth} = useContext(AuthContext)
   const { cart, cartTotal } = useContext(CartContext);
+  const [details, setDetails] = useState({
+    fullname:"",
+    Address:"",
+    city:"",
+    state:"",
+    zipcode:"",
+    country:"",
+    phone:""
+  })
+
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDetails({
+      ...details,
+      [name]:value,
+    })
+  }
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+   try {
+   const response = await axios.post(
+     'http://localhost:8080/api/address',
+     { details },
+     { withCredentials: true }
+   );
+
+     console.log(response.data)
+     if (response.status === 201) {
+       alert(response.data.message)
+     }
+   } catch (error) {
+     console.log(error)
+   }
+    
+  }
+const fetchAddress = async () => {
+  try {
+    const existingAddress = await axios.get('http://localhost:8080/api/address', {
+      withCredentials: true,
+    });
+
+    if (existingAddress.status === 200) {
+      if (existingAddress.data && existingAddress.data.message) {
+        setDetails(existingAddress.data.message[0]); // Ensure data matches the expected structure
+        console.log(existingAddress.data.message[0]); // Ensure data matches the expected structure
+        alert('Existing address found');
+      } else {
+        console.warn('No address data returned');
+      }
+    } else {
+      console.warn('Unexpected status:', existingAddress.status);
+      alert(existingAddress.data.message || 'Failed to fetch the address.');
+    }
+  } catch (error) {
+    console.error('Error fetching address:', error);
+    alert('Error fetching address. Please try again later.');
+  }
+};
+
+  useEffect(() => {
+    if (!auth) {
+     navigate('/login')
+    }
+  }, [auth])
+
+  useEffect(() => {
+    fetchAddress()
+  },[])
+  
+
 
   return (
     <>
@@ -13,7 +89,11 @@ const CheckoutPage = () => {
             Shipping Details
           </span>
 
-          <form action='' className='flex flex-col justify-start items-start w-[80%] gap-4 my-5'>
+          <form
+            action=''
+            className='flex flex-col justify-start items-start w-[80%] gap-4 my-5'
+            onSubmit={handleSubmit}
+          >
             <div className='flex flex-col w-full'>
               <label htmlFor='fullname' className='text-lg font-medium mb-1'>
                 Full Name:
@@ -21,24 +101,28 @@ const CheckoutPage = () => {
               <input
                 type='text'
                 id='fullname'
+                value={details.fullname}
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                 name='fullname'
                 placeholder='Full Name'
                 required
+                onChange={handleChange}
               />
             </div>
 
             <div className='flex flex-col w-full'>
-              <label htmlFor='address' className='text-lg font-medium mb-1'>
+              <label htmlFor='Address' className='text-lg font-medium mb-1'>
                 Address:
               </label>
               <input
                 type='text'
-                id='address'
+                id='Address'
+                value={details.Address}
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
-                name='address'
+                name='Address'
                 placeholder='Address'
                 required
+                onChange={handleChange}
               />
             </div>
 
@@ -51,8 +135,10 @@ const CheckoutPage = () => {
                 id='city'
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                 name='city'
+                value={details.city}
                 placeholder='City'
                 required
+                onChange={handleChange}
               />
             </div>
 
@@ -61,9 +147,12 @@ const CheckoutPage = () => {
                 State:
               </label>
               <select
+                required
                 name='state'
                 id='state'
+                value={details.state}
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                onChange={handleChange}
               >
                 <option>Choose a State</option>
                 <option value='AP'>Andhra Pradesh</option>
@@ -114,6 +203,8 @@ const CheckoutPage = () => {
                 name='zipcode'
                 placeholder='ZIP Code'
                 required
+                value={details.zipcode}
+                onChange={handleChange}
               />
             </div>
 
@@ -122,10 +213,14 @@ const CheckoutPage = () => {
                 Country:
               </label>
               <select
-                name=''
-                id=''
+                required
+                value={details.country}
+                name='country'
+                id='country'
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                onChange={handleChange}
               >
+                <option value=''>Choose a Country</option>
                 <option value='INDIA'>INDIA</option>
               </select>
             </div>
@@ -135,10 +230,12 @@ const CheckoutPage = () => {
                 Phone Number:
               </label>
               <input
+                value={details.phone}
+                onChange={handleChange}
                 type='number'
-                id='phoneNumber'
+                id='phone'
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
-                name='number'
+                name='phone'
                 placeholder='Phone Number'
                 required
               />
@@ -150,6 +247,7 @@ const CheckoutPage = () => {
                   id='saveaddress'
                   className='border-2 h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                   name='saveaddress'
+                  required
                 />
                 <label htmlFor='saveaddress' className='text-lg text-gray-700 font-medium'>
                   Save Address for future purchases

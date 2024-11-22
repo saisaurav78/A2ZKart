@@ -17,7 +17,7 @@ const DropDown = ({ trigger}) => {
       {trigger ? (
         <DropdownMenu>
           <DropdownMenuTrigger>{user ? `Hi, ${user}` : 'Open'}</DropdownMenuTrigger>
-          <DropdownMenuContent className='bg-customPalette-white shadow-md text-customPalette-black'>
+          <DropdownMenuContent className='bg-customPalette-white shadow-md text-customPalette-black '>
             <DropdownMenuLabel className='text-md text-customPalette-black'>
               My Account
             </DropdownMenuLabel>

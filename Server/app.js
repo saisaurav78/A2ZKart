@@ -3,8 +3,8 @@ import dotenv from 'dotenv'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
 import userRoute from './routes/userRoute.js'
+import addressRoute from './routes/addressRoute.js'
 import DBconnect from './config/config.js'
-import Auth from './middleware/Auth.js'
 import authRoute from './routes/authRoute.js'
 
 const app = express()
@@ -24,6 +24,8 @@ DBconnect()
 app.use('/api/user', userRoute)
 
 app.use('/api/auth', authRoute)
+
+app.use('/api/address', addressRoute)
 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`)
