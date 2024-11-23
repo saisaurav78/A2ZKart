@@ -8,7 +8,7 @@ import { SearchContextProvider } from './Contexts/SearchContext.jsx';
 import { VisibilityContextProvider } from './Contexts/VisibilityContext.jsx';
 import { AuthContextProvider } from './Contexts/AuthContext.jsx';
 createRoot(document.getElementById('root')).render(
-  <StrictMode>
+  <>
     <BrowserRouter>
       <CartContextProvider>
         <SearchContextProvider>
@@ -20,5 +20,5 @@ createRoot(document.getElementById('root')).render(
         </SearchContextProvider>
       </CartContextProvider>
     </BrowserRouter>
-  </StrictMode>
+  </>
 );

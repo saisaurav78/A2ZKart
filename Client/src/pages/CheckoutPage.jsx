@@ -11,7 +11,7 @@ const CheckoutPage = () => {
   const { cart, cartTotal } = useContext(CartContext);
   const [details, setDetails] = useState({
     fullname:"",
-    Address:"",
+    address:"",
     city:"",
     state:"",
     zipcode:"",
@@ -37,7 +37,7 @@ const CheckoutPage = () => {
    );
 
      console.log(response.data)
-     if (response.status === 201) {
+     if (response.status === 201 || 200) {
        alert(response.data.message)
      }
    } catch (error) {
@@ -45,30 +45,43 @@ const CheckoutPage = () => {
    }
     
   }
-const fetchAddress = async () => {
-  try {
-    const existingAddress = await axios.get('http://localhost:8080/api/address', {
-      withCredentials: true,
-    });
+// const fetchAddress = async () => {
+//   try {
+//     const existingAddress = await axios.get('http://localhost:8080/api/address', {
+//       withCredentials: true,
+//     });
 
-    if (existingAddress.status === 200) {
-      if (existingAddress.data && existingAddress.data.message) {
-        setDetails(existingAddress.data.message[0]); // Ensure data matches the expected structure
-        console.log(existingAddress.data.message[0]); // Ensure data matches the expected structure
-        alert('Existing address found');
-      } else {
-        console.warn('No address data returned');
+//     if (existingAddress.status === 200) {
+//       if (existingAddress.data && existingAddress.data.message) {
+//         setDetails(existingAddress.data.message[0]);
+//         alert('Existing address found');
+//       } else {
+//         console.warn('No address data returned');
+//       }
+//     } else {
+//       console.warn('Unexpected status:', existingAddress.status);
+//       alert(existingAddress.data.message || 'Failed to fetch the address.');
+//     }
+//   } catch (error) {
+//     console.error('Error fetching address:', error);
+//     alert('Error fetching address. Please try again later.');
+//   }
+  // };
+  
+  const fetchAddress = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/address/',{withCredentials:true});
+
+      if (response.status === 200 && response.data.message.length > 0) {
+        alert('Existing address found')
+        setDetails(response.data.message[0])
       }
-    } else {
-      console.warn('Unexpected status:', existingAddress.status);
-      alert(existingAddress.data.message || 'Failed to fetch the address.');
     }
-  } catch (error) {
-    console.error('Error fetching address:', error);
-    alert('Error fetching address. Please try again later.');
-  }
-};
+    catch (error) {
+      alert('No existing address found');
+    }
 
+  }
   useEffect(() => {
     if (!auth) {
      navigate('/login')
@@ -111,15 +124,15 @@ const fetchAddress = async () => {
             </div>
 
             <div className='flex flex-col w-full'>
-              <label htmlFor='Address' className='text-lg font-medium mb-1'>
+              <label htmlFor='address' className='text-lg font-medium mb-1'>
                 Address:
               </label>
               <input
                 type='text'
-                id='Address'
-                value={details.Address}
+                id='address'
+                value={details.address}
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
-                name='Address'
+                name='address'
                 placeholder='Address'
                 required
                 onChange={handleChange}
@@ -197,13 +210,16 @@ const fetchAddress = async () => {
                 ZIP Code:
               </label>
               <input
-                type='number'
+                type='tel'
                 id='zipcode'
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                 name='zipcode'
                 placeholder='ZIP Code'
                 required
                 value={details.zipcode}
+                pattern='\d*'
+                minLength="6"
+                maxLength="6"
                 onChange={handleChange}
               />
             </div>
@@ -232,17 +248,21 @@ const fetchAddress = async () => {
               <input
                 value={details.phone}
                 onChange={handleChange}
-                type='number'
+                type='tel'
                 id='phone'
                 className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                 name='phone'
                 placeholder='Phone Number'
+                pattern='\d*'
+                minLength="10"
+                maxLength="10"
                 required
               />
             </div>
             <div className='flex flex-col w-full'>
               <div className='flex items-center space-x-2'>
                 <input
+                  defaultChecked
                   type='checkbox'
                   id='saveaddress'
                   className='border-2 h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
@@ -259,12 +279,21 @@ const fetchAddress = async () => {
               <NavLink to={'/cart'} className='w-[50%] p-4 text-customPalette-black font-semibold'>
                 Return to cart
               </NavLink>
-              <button
-                type='submit'
-                className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
-              >
-                Add Address
-              </button>
+              {details ? (
+                <button
+                  type='submit'
+                  className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
+                >
+                  Update Address
+                </button>
+              ) : (
+                <button
+                  type='submit'
+                  className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
+                >
+                  Add Address
+                </button>
+              )}
             </div>
           </form>
         </div>
