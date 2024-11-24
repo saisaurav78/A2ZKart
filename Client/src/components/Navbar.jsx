@@ -136,7 +136,7 @@ const Navbar = () => {
                   />
                 </svg>
                 <span>Cart</span>
-                <span className='h-4 w-auto min-w-4 rounded-[50%] bg-customPalette-black font-semibold flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
+                <span className='h-5 w-auto min-w-5 rounded-[50%] bg-customPalette-black font-semibold flex items-center justify-center text-customPalette-white bottom-5 right-14 relative'>
                   {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
                 </span>
               </NavLink>

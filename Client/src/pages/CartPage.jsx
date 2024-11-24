@@ -6,14 +6,13 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CartPage = () => {
-  const { cart } = useContext(CartContext)
+  const { cart, cartTotal, setCartTotal, discount, setDiscount} = useContext(CartContext)
   const { dispatch } = useContext(CartContext)
-  const [discount, setDiscount] = useState(0);
   const { auth } = useContext(AuthContext)
-  const {cartTotal, setCartTotal} = useContext(CartContext);
   const navigate = useNavigate()
 
   const handleDiscount = (e) => {
+    e.target.value= e.target.value.trim()
     if (e.target.value === 'WELCOME10') {
       setDiscount(10);
     } else {
@@ -21,13 +20,14 @@ const CartPage = () => {
     }
   };
   useEffect(() => {
+
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
     const itemsPriceTotal = itemsPrice.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
       0,
     );
     setCartTotal(itemsPriceTotal);
-  }, [cart]);
+  }, [cart, discount, cartTotal]);
 
 
 
@@ -77,7 +77,7 @@ const CartPage = () => {
                           <button
                             className='bg-customPalette-blue text-customPalette-white size-5'
                             onClick={() => {
-                              dispatch({ type: 'Increase', item: eachItem });
+                             eachItem.quantity>9 ? alert('You cannot add more than 10 items'): dispatch({ type: 'Increase', item: eachItem });
                             }}
                           >
                             +
@@ -155,7 +155,6 @@ const CartPage = () => {
               </span>
               <button
                 onClick={
-                  
                   () => {
                     auth ? navigate('/checkout') : navigate('/login') 
                     setCartTotal(Math.ceil((cartTotal + 5) * ((100 - discount) / 100)));

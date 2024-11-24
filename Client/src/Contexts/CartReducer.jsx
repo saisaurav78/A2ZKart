@@ -1,3 +1,8 @@
+const initialState = [];
+
+export const initializer = (initialValue = initialState) =>
+  JSON.parse(localStorage.getItem("a2zkart")) || initialValue;
+
 const Cartreducer = (state, action) => {
   switch (action.type) {
     case 'Add':

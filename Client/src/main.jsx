@@ -10,15 +10,15 @@ import { AuthContextProvider } from './Contexts/AuthContext.jsx';
 createRoot(document.getElementById('root')).render(
   <>
     <BrowserRouter>
-      <CartContextProvider>
         <SearchContextProvider>
           <VisibilityContextProvider>
             <AuthContextProvider>
+      <CartContextProvider>
                 <App />
+      </CartContextProvider>
             </AuthContextProvider>
           </VisibilityContextProvider>
         </SearchContextProvider>
-      </CartContextProvider>
     </BrowserRouter>
   </>
 );
