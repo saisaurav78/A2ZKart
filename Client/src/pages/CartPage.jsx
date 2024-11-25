@@ -1,11 +1,12 @@
 import AuthContext from '@/Contexts/AuthContext';
 import CartContext from '@/Contexts/CartContext';
 import React, { useEffect, useState, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const CartPage = () => {
+  const location = useLocation()
   const { cart, cartTotal, setCartTotal, discount, setDiscount} = useContext(CartContext)
   const { dispatch } = useContext(CartContext)
   const { auth } = useContext(AuthContext)
@@ -20,7 +21,6 @@ const CartPage = () => {
     }
   };
   useEffect(() => {
-
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
     const itemsPriceTotal = itemsPrice.reduce(
       (accumulator, currentValue) => accumulator + currentValue,
@@ -29,7 +29,9 @@ const CartPage = () => {
     setCartTotal(itemsPriceTotal);
   }, [cart, discount, cartTotal]);
 
-
+  useEffect(() => {
+    location.state?.showtoast ? toast(location.state.toastmessage,{autoClose:2000, theme:"light", type:"success"}) : '';
+  },[location.state]);
 
   return (
     <>
@@ -58,7 +60,7 @@ const CartPage = () => {
                       <td className='px-4 py-2'>{eachItem.title}</td>
                       <td className='px-4 py-2'>
                         <img
-                          src={`${eachItem.images[0]}`}
+                          src={`${eachItem.image||eachItem.images}`}
                           className='w-28 max-h-28 object-contain mx-auto'
                           alt={eachItem.title}
                         />
@@ -94,7 +96,7 @@ const CartPage = () => {
                           onClick={() => {
                             toast('Removed from Cart', {
                               theme: 'dark',
-                              autoClose: 2000,
+                              autoClose: 1500,
                               type: 'error',
                               pauseOnHover: false,
                             });

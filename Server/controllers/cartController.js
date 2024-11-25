@@ -6,47 +6,43 @@ export const getCart = async (req, res) => {
         return res.status(404).json({error:"Unable to fetch user"})
     }
     try {
-        const cartItems = await cartModel.findbyId({})
+      const cartItems = await cartModel.findOne({ userId: userId })
+      if (cartItems) {
+        return res.status(200).json({message:cartItems})
+      }
+      else {
+        return res.status(201).json({message:'no items found'})
+      }
     } catch (error) {
-        
+        console.log(error)
     }
 };
 
 export const postCart = async (req, res) => {
-  const userId = req.user?.userId; // Get user ID from authenticated request
+  const userId = req.user?.userId; 
   if (!userId) {
     return res.status(400).json({ error: 'User not authenticated' });
   }
 
   try {
     const { cartItems, appliedDiscount } = req.body;
+    const updatedCart = await cartModel.findOneAndUpdate(
+      { userId }, 
+      { cartItems, appliedDiscount }, 
+      {
+        new: true, 
+        upsert: true, 
+        runValidators: true
+      }
+    );
 
-    if (!cartItems || cartItems.length === 0) {
-      return res.status(400).json({ error: 'Cart items cannot be empty' });
-    }
-
-    // Check if the user's cart already exists
-    const existingCart = await cartModel.findOne({ userId });
-
-    if (existingCart) {
-      // Update the existing cart
-      existingCart.cartItems = cartItems;
-      existingCart.appliedDiscount = appliedDiscount;
-      await existingCart.save();
-      return res.status(200).json({ message: 'Cart updated successfully' });
-    } else {
-      const newCart = new cartModel({
-        userId:userId,
-        cartItems:cartItems,
-        appliedDiscount:appliedDiscount,
-      });
-        const saved = await newCart.save();
-        if(saved) console.log('saved cart')
-      return res.status(201).json({ message: 'Cart created successfully' });
-    }
+    return res.status(200).json({
+      message: 'Cart updated or created successfully'
+    });
   } catch (error) {
     console.error('Error while processing the cart:', error);
     return res.status(500).json({ error: 'Internal server error' });
   }
 };
+
 

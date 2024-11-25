@@ -35,12 +35,14 @@ const LoginPage = () => {
 
    try {
      const response = await axios.post('http://localhost:8080/api/user/login',{ email,password}, { withCredentials: true });
-     alert(response.data.message)
-     if (response.status === 200) {
-       setAuth(true);
-    {cart.length>0 ? navigate('/checkout') : navigate('/products')}
-   }
-
+    if (response.status === 200) {
+      setAuth(true);
+      cart.length > 0
+        ? navigate('/cart', { state: { showtoast: true, toastmessage: response.data.message } })
+        : navigate('/products', {
+            state: { showtoast: true, toastmessage: response.data.message },
+          });
+    }
    } catch (err) {
      setAuth(false)
      if (err.response && err.response.data) {

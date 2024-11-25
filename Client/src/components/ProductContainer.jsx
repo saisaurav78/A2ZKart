@@ -5,15 +5,16 @@ import Skeleton from 'react-loading-skeleton';
 import { ToastContainer, toast } from 'react-toastify';
 import CartContext from '../Contexts/CartContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
+import { useLocation } from 'react-router-dom';
 
 const ProductContainer = () => {
+  const location = useLocation()
   const { dispatch } = useContext(CartContext);
   const { query, selected} = useContext(SearchContext);
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setVisible } = useContext(VisibilityContext) 
   const [count, setCount] = useState(1);
-  
   const loadProducts = async () => {
     let url;
       if (query) {
@@ -54,6 +55,12 @@ const ProductContainer = () => {
   useEffect(() => {
     loadProducts();
   }, [selected, query, count]);
+
+   useEffect(() => {
+     location.state?.showtoast
+       ? toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' })
+       : '';
+   }, [location.state]);
   return (
     <>
       {' '}

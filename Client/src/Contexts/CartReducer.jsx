@@ -5,6 +5,8 @@ export const initializer = (initialValue = initialState) =>
 
 const Cartreducer = (state, action) => {
   switch (action.type) {
+    case 'SET_CART':
+      return action.payload?action.payload:[]
     case 'Add':
       const existingProductIndex = state.findIndex((item) => item.id === action.item.id);
       if (existingProductIndex !== -1) {
