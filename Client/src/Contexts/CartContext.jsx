@@ -11,13 +11,9 @@ export const CartContextProvider = ({ children }) => {
   const [cartTotal, setCartTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
 
-  // useEffect(() => {
-  //   if (auth.auth) {
-  //     localStorage.removeItem('a2zkart');
-  //   } else {
-  //     localStorage.setItem('a2zkart', JSON.stringify(cart));
-  //   }
-  // }, [cart, auth]); 
+  useEffect(() => {
+      localStorage.setItem('a2zkart', JSON.stringify(cart));
+  }, [cart]); 
 
   const filteredCart = cart.map((item) => ({
     id: item.id,
@@ -49,28 +45,44 @@ export const CartContextProvider = ({ children }) => {
       console.error('Error sending cart:', error);
     }
   };
-
+  
   useEffect(() => {
     if (auth.auth) {
       sendCart();
     }
   }, [cart, discount]);
 
-  const getCart = async () => {
-    try {
-      console.log('getting cart from backend....');
-      const response = await axios.get('http://localhost:8080/api/cart', { withCredentials: true });
-      if (response.status === 200 || response.status === 201) {
-        const fetchedCart = response.data.message.cartItems; 
-          dispatch({
-            type: 'SET_CART',
-            payload: fetchedCart, 
-          });
-      }
-    } catch (error) {
-      console.error('Error fetching cart:', error.response?.data || error.message);
-    }
-  };
+ const getCart = async () => {
+   try {
+     console.log('Getting cart from backend...');
+     const response = await axios.get('http://localhost:8080/api/cart', { withCredentials: true });
+     if (response.status === 200 || response.status === 201) {
+       const fetchedCart = response.data.message.cartItems;
+
+       // Create a unique merged cart based on item IDs
+       const merge = [...cart]; // Assume `cart` is the current state
+
+       fetchedCart.forEach((fetchedItem) => {
+         const existingItemIndex = merge.findIndex((item) => item.id === fetchedItem.id);
+         if (existingItemIndex !== -1) {
+           // Update existing item in the cart
+           merge[existingItemIndex] = { ...merge[existingItemIndex], ...fetchedItem };
+         } else {
+           // Add new item from the backend cart
+           merge.push(fetchedItem);
+         }
+       });
+
+       dispatch({
+         type: 'SET_CART',
+         payload: merge,
+       });
+     }
+   } catch (error) {
+     console.error('Error fetching cart:', error.response?.data || error.message);
+   }
+ };
+
 
   useEffect(() => {
     if (auth.auth) {
