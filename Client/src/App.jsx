@@ -5,7 +5,7 @@ import AuthContext from './Contexts/AuthContext';
 import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
-import Spinner from './components/ui/spinner';
+import Spinner from './components/ui/Spinner';
 
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const ProductsPage = React.lazy(() => import('./pages/ProductsPage'));
