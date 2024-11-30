@@ -1,7 +1,6 @@
-import React, {useState } from 'react';
+import React from 'react';
 import ProductContainer from '../components/ProductContainer';
 import ProductCategory from '../components/ProductCategory';
-import SearchContext from '@/Contexts/SearchContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
 import { useContext } from 'react';
 import {

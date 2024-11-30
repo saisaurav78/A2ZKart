@@ -1,23 +1,25 @@
-import React, { useContext, useEffect, useState,  } from 'react';
+import React, { useContext, useEffect, useState, Suspense } from 'react';
 import Navbar from './components/Navbar';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import CartPage from './pages/CartPage';
-import RegisterPage from './pages/RegisterPage';
-import { Routes, Route, useLocation } from 'react-router-dom';
+import Footer from './components/Footer';
+import AuthContext from './Contexts/AuthContext';
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
-import Footer from './components/Footer';
-import ProductsPage from './pages/ProductsPage';
-import CheckoutPage from './pages/CheckoutPage';
-import AuthContext from './Contexts/AuthContext';
-import { Navigate } from 'react-router-dom';
+import Spinner from './components/ui/spinner';
+
+const LandingPage = React.lazy(() => import('./pages/LandingPage'));
+const ProductsPage = React.lazy(() => import('./pages/ProductsPage'));
+const LoginPage = React.lazy(() => import('./pages/LoginPage'));
+const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
+const CartPage = React.lazy(() => import('./pages/CartPage'));
+const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
 
 const App = () => {
-  const {auth}= useContext(AuthContext)
+  const { auth } = useContext(AuthContext);
   const [transition, setTransition] = useState(true);
   const location = useLocation();
   const [query, setQuery] = useState('');
+
   useEffect(() => {
     if (location.pathname === '/') {
       setTransition(true);
@@ -33,6 +35,7 @@ const App = () => {
   const onInputChange = (newValue) => {
     setQuery(newValue);
   };
+
   return (
     <>
       {transition && location.pathname === '/' ? (
@@ -45,12 +48,54 @@ const App = () => {
         <>
           <Navbar onInputChange={onInputChange} />
           <Routes key={location.pathname}>
-            <Route path='/' element={<LandingPage />} />
-            <Route path='/products' element={<ProductsPage searchQuery={query} />} />
-              <Route path='/cart' element={<CartPage />} />
-            <Route path='/login' element={auth ? <Navigate to='/products' /> : <LoginPage />} />
-            <Route path='/register' element={<RegisterPage />} />
-            <Route path='/checkout' element={<CheckoutPage />} />
+            <Route
+              path='/'
+              element={
+                <Suspense fallback={Spinner}>
+                  <LandingPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/products'
+              element={
+                <Suspense fallback={Spinner}>
+                  <ProductsPage searchQuery={query} />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/cart'
+              element={
+                <Suspense fallback={Spinner}>
+                  <CartPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/login'
+              element={
+                <Suspense fallback={Spinner}>
+                  {auth ? <Navigate to='/products' /> : <LoginPage />}
+                </Suspense>
+              }
+            />
+            <Route
+              path='/register'
+              element={
+                <Suspense fallback={Spinner}>
+                  <RegisterPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/checkout'
+              element={
+                <Suspense fallback={Spinner}>
+                  <CheckoutPage />
+                </Suspense>
+              }
+            />
           </Routes>
           <Footer />
         </>

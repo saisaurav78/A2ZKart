@@ -56,11 +56,12 @@ const ProductContainer = () => {
     loadProducts();
   }, [selected, query, count]);
 
-   useEffect(() => {
-     location.state?.showtoast
-       ? toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' })
-       : '';
-   }, [location.state]);
+  useEffect(() => {
+    if (location.state?.showtoast) {
+      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
+    }
+  }, [location.state]);
+
   return (
     <>
       {' '}
@@ -69,16 +70,16 @@ const ProductContainer = () => {
       lg:justify-between sm:w-[40vw] md:w-[40vw] lg:w-[68vw] w-[40vw]'
       >
         <span className='text-customPalette-black text-base text-nowrap lg:ml-40'>
-          Showing { products.length} products
+          Showing {products.length} products
         </span>
 
         <select
           className='font-1 h-12 bg-customPalette-white text-xl font-normal sm:w-full lg:w-auto'
           onChange={handleSort}
         >
+          <option  value=''>Latest arrivals</option>
           <option value='>'>Price High to Low</option>
           <option value='<'>Price Low to High</option>
-          <option value=''>Popular</option>
         </select>
         <span
           onClick={() => {
@@ -121,10 +122,11 @@ const ProductContainer = () => {
               </span>
               <img
                 loading='lazy'
-                className='w-full h-60 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
                 src={product.images[0]}
-                alt={'Product Img'}
+                alt={`${product.title} image`}
+                className='w-full h-60 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
               />
+
               <span className='text-2xl p-2 text-customPalette-red text-center'>
                 {'Price: $' + product.price}
               </span>
@@ -148,7 +150,6 @@ const ProductContainer = () => {
         )}
       </main>
       <ToastContainer />
-     
     </>
   );
 };
