@@ -4,11 +4,26 @@ import CartContext from '@/Contexts/CartContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '@/Contexts/AuthContext';
+import { toast, ToastContainer } from 'react-toastify';
 
 const CheckoutPage = () => {
   const navigate = useNavigate()
+  const [valid, setValid] =useState(true)
   const {auth} = useContext(AuthContext)
-  const { cart, cartTotal } = useContext(CartContext);
+  const { cart, cartTotal, setCartTotal, discount, setDiscount } = useContext(CartContext);
+
+
+
+  useEffect(() => {
+    const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
+    const itemsPriceTotal = itemsPrice.reduce(
+      (accumulator, currentValue) => accumulator + currentValue,
+      0,
+    );
+    setCartTotal(Math.ceil(itemsPriceTotal));
+  }, [cart, discount, cartTotal]);
+
+
   const [details, setDetails] = useState({
     fullname:"",
     address:"",
@@ -22,11 +37,17 @@ const CheckoutPage = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setDetails({
-      ...details,
-      [name]:value,
-    })
-  }
+    if (value.trim() !== '') {
+      setValid(true);
+    } else {
+      setValid(false); 
+    }
+    setDetails((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault()
    try {
@@ -45,40 +66,65 @@ const CheckoutPage = () => {
    }
     
   }
-// const fetchAddress = async () => {
-//   try {
-//     const existingAddress = await axios.get('http://localhost:8080/api/address', {
-//       withCredentials: true,
-//     });
 
-//     if (existingAddress.status === 200) {
-//       if (existingAddress.data && existingAddress.data.message) {
-//         setDetails(existingAddress.data.message[0]);
-//         alert('Existing address found');
-//       } else {
-//         console.warn('No address data returned');
-//       }
-//     } else {
-//       console.warn('Unexpected status:', existingAddress.status);
-//       alert(existingAddress.data.message || 'Failed to fetch the address.');
-//     }
-//   } catch (error) {
-//     console.error('Error fetching address:', error);
-//     alert('Error fetching address. Please try again later.');
-//   }
-  // };
+  const handleOrder = async (paymentMethod) => {
+    try {
+      const isDetailsValid =
+        details &&
+        details.fullname?.trim() &&
+        details.address?.trim() &&
+        details.city?.trim() &&
+        details.state?.trim() &&
+        details.zipcode &&
+        details.phone
+
+      if (!isDetailsValid) {
+        setValid(false)
+       toast('Ensure All fields are valid', {type:'error' });
+        return;
+      }
+      const uri = 'http://localhost:8080/api/order';
+      const payload = {
+        order: cart,
+        orderTotal: cartTotal,
+        discount: discount,
+        paymentMethod,
+        address: details,
+      };
+
+      const config = {
+        withCredentials: true,
+      };
+
+      const response = await axios.post(uri, payload, config);
+
+      if (response.status === 200) {
+        alert(response.data.message);
+        navigate('/')
+      } else {
+        alert('Unexpected response from server');
+      }
+    } catch (error) {
+      console.error('Order Error:', error);
+      alert(
+        error.response?.data?.message ||
+          'An error occurred while placing the order. Please try again.',
+      );
+    }
+  };
+
   
   const fetchAddress = async () => {
     try {
       const response = await axios.get('http://localhost:8080/api/address/',{withCredentials:true});
 
       if (response.status === 200 && response.data.message.length > 0) {
-        alert('Existing address found')
+      toast('Existing address found', {autoClose:3000, type:'success'})
         setDetails(response.data.message[0])
       }
     }
     catch (error) {
-      alert('No existing address found');
+          toast('No address found', { autoClose: 3000, theme:'dark', type:"warning"})
     }
 
   }
@@ -97,13 +143,13 @@ const CheckoutPage = () => {
   return (
     <>
       <section className='w-full h-full flex flex-col lg:flex-row '>
+      <ToastContainer />
         <div className='container w-[100%] m-auto lg:w-[60%] p-5 flex flex-col lg:ml-28'>
           <span className='text-4xl w-full p-3  text-customPalette-black font-semibold'>
             Shipping Details
           </span>
 
           <form
-            action=''
             className='flex flex-col justify-start items-start w-[80%] gap-4 my-5'
             onSubmit={handleSubmit}
           >
@@ -115,7 +161,9 @@ const CheckoutPage = () => {
                 type='text'
                 id='fullname'
                 value={details.fullname}
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 name='fullname'
                 placeholder='Full Name'
                 required
@@ -131,7 +179,9 @@ const CheckoutPage = () => {
                 type='text'
                 id='address'
                 value={details.address}
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 name='address'
                 placeholder='Address'
                 required
@@ -146,7 +196,9 @@ const CheckoutPage = () => {
               <input
                 type='text'
                 id='city'
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 name='city'
                 value={details.city}
                 placeholder='City'
@@ -164,7 +216,9 @@ const CheckoutPage = () => {
                 name='state'
                 id='state'
                 value={details.state}
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 onChange={handleChange}
               >
                 <option>Choose a State</option>
@@ -212,14 +266,16 @@ const CheckoutPage = () => {
               <input
                 type='tel'
                 id='zipcode'
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 name='zipcode'
                 placeholder='ZIP Code'
                 required
                 value={details.zipcode}
                 pattern='\d*'
-                minLength="6"
-                maxLength="6"
+                minLength='6'
+                maxLength='6'
                 onChange={handleChange}
               />
             </div>
@@ -233,7 +289,9 @@ const CheckoutPage = () => {
                 value={details.country}
                 name='country'
                 id='country'
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 onChange={handleChange}
               >
                 <option value=''>Choose a Country</option>
@@ -250,12 +308,14 @@ const CheckoutPage = () => {
                 onChange={handleChange}
                 type='tel'
                 id='phone'
-                className='border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
+                className={`border-2 w-full h-10 px-3 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow ${
+                  !valid && 'border-red-500 focus:ring-0'
+                }`}
                 name='phone'
                 placeholder='Phone Number'
                 pattern='\d*'
-                minLength="10"
-                maxLength="10"
+                minLength='10'
+                maxLength='10'
                 required
               />
             </div>
@@ -300,7 +360,7 @@ const CheckoutPage = () => {
 
         <div className='container lg:w-[50%] w-[80%] flex flex-col m-auto lg:m-0 lg:mr-28'>
           <span className='text-4xl bg-customPalette-blue w-full p-3 my-5 text-center text-customPalette-white font-semibold'>
-            Payment Details
+            Order Details
           </span>
           <div className='p-5 flex flex-col bg-customPalette-white text-xl shadow-md rounded-md'>
             <span className='text-xl font-semibold mb-4'>Order Summary</span>
@@ -312,7 +372,13 @@ const CheckoutPage = () => {
 
             <div className='flex justify-between mb-2'>
               <span>Sub Total:</span>
-              <span>$ {cart.length > 0 ? cartTotal - 5 : 0}</span>
+              <span>$ {cart.length > 0 ? cartTotal : 0}</span>
+            </div>
+            <div className='flex justify-between mb-2'>
+              <span className='text-customPalette-red'>Discount:</span>
+              <span className='text-customPalette-red'>
+                $ {discount ? Math.ceil((discount / 100) * cartTotal) : 0}
+              </span>
             </div>
 
             <div className='flex justify-between mb-2'>
@@ -322,14 +388,23 @@ const CheckoutPage = () => {
 
             <div className='flex justify-between mt-4 border-t-2 border-customPalette-blue pt-2'>
               <span className='font-bold'>Total:</span>
-              <span className='font-bold'>$ {cart.length > 0 ? cartTotal : 5}</span>
+              <span className='font-bold'>
+                $ {Math.ceil((cartTotal + 5) * ((100 - discount) / 100))}
+              </span>
             </div>
           </div>
 
           <div className='shadow-md p-5 my-5 rounded-md bg-customPalette-white'>
             <span className='text-xl font-semibold mb-3 block'>Select Payment Method</span>
 
-            <form className='flex flex-col gap-3 mt-3'>
+            <form
+              className='flex flex-col gap-3 mt-3'
+              onSubmit={(e) => {
+                e.preventDefault();
+                const paymentMethod = e.target.paymentMethod.value;
+                handleOrder(paymentMethod);
+              }}
+            >
               <div className='flex items-center'>
                 <input
                   type='radio'
