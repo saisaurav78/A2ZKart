@@ -63,6 +63,7 @@ const CartPage = () => {
                           src={`${eachItem.image || eachItem.images[0]}`}
                           className='w-28 max-h-28 object-contain mx-auto'
                           alt={eachItem.title}
+                          loading='lazy'
                         />
                       </td>
                       <td className='px-4 py-2'>

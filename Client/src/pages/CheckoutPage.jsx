@@ -7,12 +7,10 @@ import AuthContext from '@/Contexts/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
 
 const CheckoutPage = () => {
-  const navigate = useNavigate()
-  const [valid, setValid] =useState(true)
-  const {auth} = useContext(AuthContext)
-  const { cart, cartTotal, setCartTotal, discount, setDiscount } = useContext(CartContext);
-
-
+  const navigate = useNavigate();
+  const [valid, setValid] = useState(true);
+  const { auth } = useContext(AuthContext);
+  const { cart, cartTotal, setCartTotal, discount } = useContext(CartContext);
 
   useEffect(() => {
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
@@ -23,24 +21,22 @@ const CheckoutPage = () => {
     setCartTotal(Math.ceil(itemsPriceTotal));
   }, [cart, discount, cartTotal]);
 
-
   const [details, setDetails] = useState({
-    fullname:"",
-    address:"",
-    city:"",
-    state:"",
-    zipcode:"",
-    country:"",
-    phone:""
-  })
-
+    fullname: '',
+    address: '',
+    city: '',
+    state: '',
+    zipcode: '',
+    country: '',
+    phone: '',
+  });
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     if (value.trim() !== '') {
       setValid(true);
     } else {
-      setValid(false); 
+      setValid(false);
     }
     setDetails((prevDetails) => ({
       ...prevDetails,
@@ -49,23 +45,22 @@ const CheckoutPage = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-   try {
-   const response = await axios.post(
-     'http://localhost:8080/api/address',
-     { details },
-     { withCredentials: true }
-   );
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/address',
+        { details },
+        { withCredentials: true },
+      );
 
-     console.log(response.data)
-     if (response.status === 201 || 200) {
-       alert(response.data.message)
-     }
-   } catch (error) {
-     console.log(error)
-   }
-    
-  }
+      console.log(response.data);
+      if (response.status === 201 || 200) {
+        alert(response.data.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const handleOrder = async (paymentMethod) => {
     try {
@@ -76,11 +71,11 @@ const CheckoutPage = () => {
         details.city?.trim() &&
         details.state?.trim() &&
         details.zipcode &&
-        details.phone
+        details.phone;
 
       if (!isDetailsValid) {
-        setValid(false)
-       toast('Ensure All fields are valid', {type:'error' });
+        setValid(false);
+        toast('Ensure All fields are valid', { type: 'error' });
         return;
       }
       const uri = 'http://localhost:8080/api/order';
@@ -100,7 +95,7 @@ const CheckoutPage = () => {
 
       if (response.status === 200) {
         alert(response.data.message);
-        navigate('/')
+        navigate('/products');
       } else {
         alert('Unexpected response from server');
       }
@@ -113,37 +108,38 @@ const CheckoutPage = () => {
     }
   };
 
-  
   const fetchAddress = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/address/',{withCredentials:true});
+      const response = await axios.get('http://localhost:8080/api/address/', {
+        withCredentials: true,
+      });
 
       if (response.status === 200 && response.data.message.length > 0) {
-      toast('Existing address found', {autoClose:3000, type:'success'})
-        setDetails(response.data.message[0])
+        toast('Existing address found', { autoClose: 3000, type: 'success' });
+        setDetails(response.data.message[0]);
       }
+    } catch (error) {
+      toast('No address found', { autoClose: 3000, theme: 'dark', type: 'warning' });
     }
-    catch (error) {
-          toast('No address found', { autoClose: 3000, theme:'dark', type:"warning"})
-    }
-
-  }
+  };
   useEffect(() => {
     if (!auth) {
-     navigate('/login')
+      navigate('/login');
     }
-  }, [auth])
+  }, [auth]);
 
   useEffect(() => {
-    fetchAddress()
-  },[])
-  
-
+    if (cart.length === 0) {
+      navigate('/products');
+    } else {
+      fetchAddress();
+    }
+  }, [cart]); 
 
   return (
     <>
       <section className='w-full h-full flex flex-col lg:flex-row '>
-      <ToastContainer />
+        <ToastContainer />
         <div className='container w-[100%] m-auto lg:w-[60%] p-5 flex flex-col lg:ml-28'>
           <span className='text-4xl w-full p-3  text-customPalette-black font-semibold'>
             Shipping Details
@@ -322,7 +318,6 @@ const CheckoutPage = () => {
             <div className='flex flex-col w-full'>
               <div className='flex items-center space-x-2'>
                 <input
-                  defaultChecked
                   type='checkbox'
                   id='saveaddress'
                   className='border-2 h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
@@ -339,21 +334,12 @@ const CheckoutPage = () => {
               <NavLink to={'/cart'} className='w-[50%] p-4 text-customPalette-black font-semibold'>
                 Return to cart
               </NavLink>
-              {details ? (
-                <button
-                  type='submit'
-                  className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
-                >
-                  Update Address
-                </button>
-              ) : (
-                <button
-                  type='submit'
-                  className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
-                >
-                  Add Address
-                </button>
-              )}
+              <button
+                type='submit'
+                className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
+              >
+                {valid ? 'Add Address' : 'Update '}
+              </button>
             </div>
           </form>
         </div>
