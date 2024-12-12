@@ -13,6 +13,7 @@ const LoginPage = React.lazy(() => import('./pages/LoginPage'));
 const RegisterPage = React.lazy(() => import('./pages/RegisterPage'));
 const CartPage = React.lazy(() => import('./pages/CartPage'));
 const CheckoutPage = React.lazy(() => import('./pages/CheckoutPage'));
+const OrdersPage = React.lazy(() => import('./pages/OrdersPage'));
 
 const App = () => {
   const { auth } = useContext(AuthContext);
@@ -93,6 +94,14 @@ const App = () => {
               element={
                 <Suspense fallback={Spinner}>
                   <CheckoutPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/orders'
+              element={
+                <Suspense fallback={Spinner}>
+                  {auth ? <OrdersPage /> : <Navigate to='/products' />}
                 </Suspense>
               }
             />

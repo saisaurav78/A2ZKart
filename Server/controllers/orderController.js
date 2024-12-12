@@ -26,7 +26,6 @@ export const getOrder = async (req,res) => {
   try {
     const userId = req.user?.userId; 
     const orders = await orderModel.find({ userId: userId });
-    console.log(orders)
     res.status(200).json({message:orders})
   } catch (error) {
     console.log(error)

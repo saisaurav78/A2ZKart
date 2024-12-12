@@ -31,7 +31,7 @@ app.use('/api/address', addressRoute)
 
 app.use('/api/cart', cartRoute)
 
-app.use('/api/order', orderRoute)
+app.use('/api/orders', orderRoute)
 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`)

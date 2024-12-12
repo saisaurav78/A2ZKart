@@ -58,7 +58,7 @@ const ProductContainer = () => {
 
   useEffect(() => {
     if (location.state?.showtoast) {
-      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
+      toast(location.state.toastmessage, { autoClose: 3000, theme: 'light', type: 'success' });
     }
   }, [location.state]);
 
