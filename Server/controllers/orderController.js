@@ -4,15 +4,11 @@ export const postOrder = async (req, res) => {
   try {
     const userId = req.user?.userId; 
       const { paymentMethod, order, orderTotal, address , discount} = req.body; 
-      
-
     if (!order || !paymentMethod) {
       return res.status(400).json({ message: 'Order and payment method are required' });
     }
-
     const placedOrder = new orderModel({ userId: userId, products: order, paymentMethod: paymentMethod, orderTotal: orderTotal, discount:discount, shippingAddress: address })
     const saved= await placedOrder.save()
-    console.log(saved)
     if (saved) return res.status(200).json({ message: 'Order placed successfully' }); 
   }
   catch (error) {

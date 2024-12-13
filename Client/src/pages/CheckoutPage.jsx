@@ -78,7 +78,7 @@ const CheckoutPage = () => {
         toast('Ensure All fields are valid', { type: 'error' });
         return;
       }
-      const uri = 'http://localhost:8080/api/order';
+      const uri = 'http://localhost:8080/api/orders';
       const payload = {
         order: cart,
         orderTotal: cartTotal,
