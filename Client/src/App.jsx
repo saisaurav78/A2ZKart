@@ -6,6 +6,7 @@ import { Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Spinner from './components/ui/Spinner';
+import ProfilePage from './pages/ProfilePage';
 
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const ProductsPage = React.lazy(() => import('./pages/ProductsPage'));
@@ -102,6 +103,14 @@ const App = () => {
               element={
                 <Suspense fallback={Spinner}>
                   {auth ? <OrdersPage /> : <Navigate to='/products' />}
+                </Suspense>
+              }
+            />
+            <Route
+              path='/profile'
+              element={
+                <Suspense fallback={Spinner}>
+                  {auth ? <ProfilePage /> : <Navigate to='/products' />}
                 </Suspense>
               }
             />
