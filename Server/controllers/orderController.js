@@ -1,4 +1,5 @@
 import orderModel from "../models/orderModel.js";
+import cartModel from "../models/cartModel.js";
 
 export const postOrder = async (req, res) => {
   try {
@@ -9,7 +10,14 @@ export const postOrder = async (req, res) => {
     }
     const placedOrder = new orderModel({ userId: userId, products: order, paymentMethod: paymentMethod, orderTotal: orderTotal, discount:discount, shippingAddress: address })
     const saved= await placedOrder.save()
-    if (saved) return res.status(200).json({ message: 'Order placed successfully' }); 
+    if (saved) {
+      await cartModel.findOneAndUpdate(
+        { userId },
+        { cartItems: [], appliedDiscount: null }, // Clear cart content
+        { new: true },
+      );
+      return res.status(200).json({ message: 'Order placed successfully' });
+    }
   }
   catch (error) {
     console.error('Error while placing order:', error.message);

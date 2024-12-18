@@ -20,7 +20,6 @@ const fetchUser = async () => {
       setAuth(false)
     }
   } catch (error) {
-    console.error('Error fetching user status:', error);
     setAuth(false);
     setUser('');
   }

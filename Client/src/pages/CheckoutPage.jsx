@@ -10,7 +10,7 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [valid, setValid] = useState(true);
   const { auth } = useContext(AuthContext);
-  const { cart, cartTotal, setCartTotal, discount } = useContext(CartContext);
+  const { cart, cartTotal, setCartTotal, discount, dispatch} = useContext(CartContext);
 
   useEffect(() => {
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
@@ -94,8 +94,9 @@ const CheckoutPage = () => {
       const response = await axios.post(uri, payload, config);
 
       if (response.status === 200) {
-        alert(response.data.message);
-        navigate('/products');
+        dispatch({type:'CLEAR_CART'})
+        localStorage.removeItem('a2zkart')
+        navigate('/thankyou', { state: { orderSuccess: true } });
       } else {
         alert('Unexpected response from server');
       }
@@ -397,7 +398,7 @@ const CheckoutPage = () => {
                   id='cod'
                   name='paymentMethod'
                   value='cod'
-                  className='mr-2'
+                  className='mr-2 size-4'
                   required
                 />
                 <label htmlFor='cod' className='text-lg'>
@@ -406,14 +407,14 @@ const CheckoutPage = () => {
               </div>
 
               <div className='flex items-center'>
-                <input type='radio' id='card' name='paymentMethod' value='card' className='mr-2' />
+                <input type='radio' id='card' name='paymentMethod' value='card' className='mr-2 size-4' />
                 <label htmlFor='card' className='text-lg'>
                   Credit/Debit Card
                 </label>
               </div>
 
               <div className='flex items-center'>
-                <input type='radio' id='upi' name='paymentMethod' value='upi' className='mr-2' />
+                <input type='radio' id='upi' name='paymentMethod' value='upi' className='mr-2 size-4' />
                 <label htmlFor='upi' className='text-lg'>
                   UPI
                 </label>

@@ -16,6 +16,6 @@ html, body {
     padding: 0;
     box-sizing: border-box;
     overflow-x: hidden;
-     overflow-y: scroll !important; /* Ensure scrollbar stays visible */
+     overflow-y:auto; /* Ensure scrollbar stays visible */
   margin-right: 0 !important;
 }

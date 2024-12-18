@@ -5,8 +5,10 @@ export const initializer = (initialValue = initialState) =>
 
 const Cartreducer = (state, action) => {
   switch (action.type) {
+    case 'CLEAR_CART':
+      return [];
     case 'SET_CART':
-      return action.payload?action.payload:[]
+      return action.payload ? action.payload : [];
     case 'Add':
       const existingProductIndex = state.findIndex((item) => item.id === action.item.id);
       if (existingProductIndex !== -1) {
@@ -31,7 +33,6 @@ const Cartreducer = (state, action) => {
           item.id === action.item.id ? { ...item, quantity: item.quantity - 1 } : item,
         )
         .filter((item) => item.quantity > 0);
-
     default:
       return state;
   }

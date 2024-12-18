@@ -46,7 +46,7 @@ const ProfileForm = () => {
             className='border-2 rounded h-12 w-full p-2 mt-1 focus:outline-none focus:ring-2 focus:ring-blue-500'
           >
             <option value=''>Choose</option>
-            <option selected value='Male'>Male</option>
+            <option value='Male'>Male</option>
             <option value='Female'>Female</option>
           </select>
         </label>

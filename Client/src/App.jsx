@@ -7,6 +7,8 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'react-loading-skeleton/dist/skeleton.css';
 import Spinner from './components/ui/Spinner';
 import ProfilePage from './pages/ProfilePage';
+import ScrollToTop from './components/ScrollToTop';
+import ThankYou from './pages/ThankYou';
 
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const ProductsPage = React.lazy(() => import('./pages/ProductsPage'));
@@ -48,6 +50,7 @@ const App = () => {
         </div>
       ) : (
         <>
+          <ScrollToTop />
           <Navbar onInputChange={onInputChange} />
           <Routes key={location.pathname}>
             <Route
@@ -114,6 +117,7 @@ const App = () => {
                 </Suspense>
               }
             />
+            <Route path='/thankyou' element={<ThankYou />} />
           </Routes>
           <Footer />
         </>
