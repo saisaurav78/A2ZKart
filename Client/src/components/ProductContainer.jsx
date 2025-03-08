@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import  SearchContext  from '@/Contexts/SearchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
@@ -14,7 +14,7 @@ const ProductContainer = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const { setVisible } = useContext(VisibilityContext) 
-  const [count, setCount] = useState(1);
+
   const loadProducts = async () => {
     let url;
       if (query) {
@@ -39,22 +39,20 @@ const ProductContainer = () => {
     }
   };
 
-  const handleSort = (e) => {
-    const value = e.target.value;
-    const sortedProducts = [...products].sort((a, b) => {
-      if (value === '<') {
-        return a.price - b.price;
-      } else if (value === '>') {
-        return b.price - a.price;
-      }
-      return 0;
-    });
-    setProducts(sortedProducts);
-  };
+const handleSort = useCallback((e) => {
+  const value = e.target.value;
+
+  setProducts((prevProducts) =>
+    [...prevProducts].sort((a, b) => {
+      return value === '<' ? a.price - b.price : b.price - a.price;
+    }),
+  );
+}, []);
+
 
   useEffect(() => {
     loadProducts();
-  }, [selected, query, count]);
+  }, [selected, query]);
 
   useEffect(() => {
     if (location.state?.showtoast) {
