@@ -2,48 +2,96 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-
-
+import { Eye, EyeOff } from 'lucide-react';
 
 const RegisterPage = () => {
-  const navigate = useNavigate()
-  const [username,setUsername] = useState('')
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [emailValid, setEmailValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
-  const [passwordsMatch, setPasswordsMatch] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
+
+  const [details, setDetails] = useState({
+    username: '',
+    email: '',
+    password: '',
+    confirmPassword: '',
+  });
+
+  const [valid, setValid] = useState({
+    emailValid: true,
+    passwordValid: true,
+    passwordsMatchValid: true,
+  });
+
+  const [formState, setFormState] = useState({
+    error: '',
+    loading: false,
+  });
+
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|net|org|edu|gov|in|co\.uk|io|tech)$/;
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setDetails((prev) => ({ ...prev, [name]: value }));
+    setValid((prev) => {
+      const newValidity = {
+        emailValid: name === 'email' ? emailRegex.test(value) : prev.emailValid,
+        passwordValid: name === 'password' ? passwordRegex.test(value) : prev.passwordValid,
+        passwordsMatchValid:
+          name === 'confirmPassword' ? value === details.password : prev.passwordsMatchValid,
+      };
+
+      if (
+        newValidity.emailValid !== prev.emailValid ||
+        newValidity.passwordValid !== prev.passwordValid ||
+        newValidity.passwordsMatchValid !== prev.passwordsMatchValid
+      ) {
+        return newValidity;
+      }
+
+      return prev;
+    });
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    setError('');
-    setLoading(true)
+    setFormState({ error: '', loading: true });
 
-    if (!emailValid || !passwordValid || !passwordsMatch || !username) {
-      setError('Please ensure all fields are valid.');
-      setLoading(false)
+    const { username, email, password } = details
+    
+      if (!email.trim() || !password.trim() || !username.trim()) {
+        setFormState((prev) => ({
+          ...prev,
+          error: 'All fields are required',
+          loading: false,
+        }));
+        return;
+      }
+
+    if (!valid.emailValid || !valid.passwordValid || !valid.passwordsMatchValid) {
+      setFormState((prev) => ({...prev, error:'Please ensure all fields are valid', loading:false}))
       return;
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/user/register', { username, email, password, });
-      alert(response.data.message); 
-       if (response.status === 201) {
-        navigate('/login')
-       }
-   } catch (err) {
-     if (err.response && err.response.data) {
-       setError(err.response.data.message || 'Login failed. Please try again.');
-     } else {
-       setError('An unexpected error occurred. Please try again later.');
-     }
-   } finally {
-     setLoading(false);
-   }
-  
+      const response = await axios.post('http://localhost:8080/api/user/register', {
+        username,
+        email,
+        password,
+      });
+      alert(response.data.message);
+      if (response.status === 201) {
+        navigate('/login');
+      }
+    } catch (err) {
+         setFormState((prev) => ({
+           ...prev,
+           error:
+             err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
+           loading: false,
+         }));
+    } finally {
+      setFormState((prev) => ({ ...prev, loading: false }));
+    }
   };
 
   return (
@@ -52,10 +100,12 @@ const RegisterPage = () => {
         onSubmit={handleRegister}
         className='lg:w-1/3 md:w-1/2 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'
       >
-        <span className='text-customPalette-black text-xl font-medium title-font mb-5'>
+        <span className='text-customPalette-black lg:text-2xl text-xl font-medium title-font mb-5'>
           Register
         </span>
-        {error && <span className='text-customPalette-red text-md mb-4'>{error}</span>}
+        {formState.error && (
+          <span className='text-customPalette-red text-md mb-4'>{formState.error}</span>
+        )}
         <div className='relative mb-4'>
           <label htmlFor='username' className='text-customPalette-black text-md'>
             username
@@ -63,16 +113,12 @@ const RegisterPage = () => {
           <input
             type='text'
             id='username'
+            disabled={formState.loading}
             name='username'
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-            }}
+            value={details.username}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {username.length > 0 && (
-            <span className='text-customPalette-blue text-sm'>username looks good</span>
-          )}
         </div>
         <div className='relative mb-4'>
           <label htmlFor='email' className='text-customPalette-black text-md'>
@@ -82,16 +128,13 @@ const RegisterPage = () => {
             type='email'
             id='email'
             name='email'
-            value={email}
-            onChange={(e) => {
-              const value = e.target.value;
-              setEmail(value);
-              setEmailValid(value.includes('@') && value.slice(-4) === '.com');
-            }}
+            disabled={formState.loading}
+            value={details.email}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {email.length > 0 ? (
-            emailValid ? (
+          {details.email.length > 0 ? (
+            valid.emailValid ? (
               <span className='text-customPalette-blue text-sm'>Email looks good</span>
             ) : (
               <span className='text-customPalette-red text-sm'>Invalid email</span>
@@ -105,24 +148,35 @@ const RegisterPage = () => {
             Password
           </label>
           <input
-            type='password'
+            disabled={formState.loading}
+            type={showPassword ? 'text' : 'password'}
             id='password'
             name='password'
-            value={password}
-            onChange={(e) => {
-              const value = e.target.value;
-              setPassword(value);
-              setPasswordValid(value.length >= 8 && value.length <= 20);
-              setPasswordsMatch(value === confirmPassword);
-            }}
+            value={details.password}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {password.length > 0 ? (
-            passwordValid ? (
+          <button
+            title='show password'
+            type='button'
+            onClick={() => setShowPassword((prev) => !prev)}
+            className='absolute right-3 top-8 text-customPalette-blue'
+          >
+            {showPassword ? <Eye /> : <EyeOff />}
+          </button>
+          {details.password.length > 0 ? (
+            valid.passwordValid ? (
               <span className='text-customPalette-blue text-sm'>Password looks good </span>
             ) : (
               <span className='text-customPalette-red text-sm'>
-                Password should be 8-20 characters
+                <p>Password must contain:</p>
+                <ul>
+                  <li> At least one uppercase letter (A-Z)</li>
+                  <li> At least one lowercase letter (a-z)</li>
+                  <li> At least one number (0-9)</li>
+                  <li> At least one special character (@$!%*?&)</li>
+                  <li> Minimum 8 characters</li>
+                </ul>
               </span>
             )
           ) : (
@@ -134,19 +188,24 @@ const RegisterPage = () => {
             Confirm Password
           </label>
           <input
-            type='password'
-            id='confirmpassword'
-            name='confirmpassword'
-            value={confirmPassword}
-            onChange={(e) => {
-              const value = e.target.value;
-              setConfirmPassword(value);
-              setPasswordsMatch(value === password);
-            }}
+            disabled={formState.loading}
+            type={showPassword ? 'text' : 'password'}
+            id='password'
+            name='confirmPassword'
+            value={details.confirmPassword}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {password ? (
-            passwordsMatch ? (
+          <button
+            title='show password'
+            type='button'
+            onClick={() => setShowPassword((prev) => !prev)}
+            className='absolute right-3 top-8 text-customPalette-blue'
+          >
+            {showPassword ? <Eye /> : <EyeOff />}
+          </button>
+          {details.confirmPassword.length > 0 ? (
+            valid.passwordsMatchValid ? (
               <span className='text-customPalette-blue text-sm'>Passwords match</span>
             ) : (
               <span className='text-customPalette-red text-sm'>Passwords do not match</span>
@@ -166,13 +225,12 @@ const RegisterPage = () => {
         </p>
         <br />
         <button
-          disabled={loading}
+          disabled={formState.loading}
           className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
         >
-          {loading ? 'Registering user...' : 'Register'}
+          {formState.loading ? 'Registering user...' : 'Register'}
         </button>
       </form>
-
     </section>
   );
 };

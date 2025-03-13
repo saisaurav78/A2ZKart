@@ -1,88 +1,137 @@
 import axios from 'axios';
-import React, { useContext, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Eye, EyeOff } from 'lucide-react';
 
 import AuthContext from '@/Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
 
-
 const LoginPage = () => {
-  const { cart } = useContext(CartContext)
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [emailValid, setEmailValid] = useState(false);
-  const [passwordValid, setPasswordValid] = useState(false);
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false)
-  const { setAuth } = useContext(AuthContext)
-  const navigate = useNavigate()
-  
-  
+  const { cart } = useContext(CartContext);
+  const [showPassword, setShowPassword] = useState(false);
+  const { setAuth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
+  const [loginDetails, setLoginDetails] = useState({
+    email: '',
+    password: '',
+  });
 
+  const [formState, setFormState] = useState({
+    error: '',
+    loading: false,
+  });
 
- const handleLogin = async (e) => {
-   e.preventDefault();
-   setError('');
-   setLoading(true);
+  const [valid, setValid] = useState({
+    emailValid: true,
+    passwordValid: true,
+  });
 
-   if (!emailValid || !passwordValid) {
-     setError('Please ensure all fields are valid.');
-     setLoading(false);
-     return;
-   }
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|net|org|edu|gov|in|co\.uk|io|tech)$/;
 
-   try {
-     const response = await axios.post('http://localhost:8080/api/user/login',{ email,password}, { withCredentials: true });
-    if (response.status === 200) {
-      setAuth(true);
-      cart.length > 0
-        ? navigate('/cart', { state: { showtoast: true, toastmessage: response.data.message } })
-        : navigate('/products', {
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setLoginDetails((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    setValid((prev) => {
+      const newValidity = {
+        emailValid: name === 'email' ? emailRegex.test(value) : prev.emailValid,
+        passwordValid: name === 'password' ? value.length >= 8 : prev.passwordValid,
+      };
+      if (
+        newValidity.emailValid !== prev.emailValid ||
+        newValidity.passwordValid !== prev.passwordValid
+      ) {
+        return newValidity;
+      }
+
+      return prev;
+    });
+  };
+
+    const handleLogin = async (e) => {
+      e.preventDefault();
+
+      setFormState({ error: '', loading: true });
+
+      const { email, password } = loginDetails;
+
+      if (!email.trim() || !password.trim()) {
+        setFormState((prev) => ({
+          ...prev,
+          error: 'Email and password are required.',
+          loading: false,
+        }));
+        return;
+      }
+
+      if (!valid.emailValid || !valid.passwordValid) {
+        setFormState((prev) => ({
+          ...prev,
+          error: 'Please ensure all fields are valid.',
+          loading: false,
+        }));
+        return;
+      }
+
+      try {
+        const response = await axios.post(
+          'http://localhost:8080/api/user/login',
+          { email, password },
+          { withCredentials: true },
+        );
+
+        if (response.status === 200) {
+          setAuth(true);
+          navigate(cart.length > 0 ? '/cart' : '/products', {
             state: { showtoast: true, toastmessage: response.data.message },
           });
-    }
-   } catch (err) {
-     setAuth(false)
-     if (err.response && err.response.data) {
-       setError(err.response.data.message || 'Login failed. Please try again.');
-     } else {
-       setError('An unexpected error occurred. Please try again later.');
-     }
-   } finally {
-     setLoading(false);
-   }
-  }
-  
+        }
+      } catch (err) {
+        setAuth(false);
+        setFormState((prev) => ({
+          ...prev,
+          error:
+            err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
+          loading: false,
+        }));
+      } finally {
+        setFormState((prev) => ({ ...prev, loading: false }));
+      }
+    };
 
   return (
     <section className='w-full h-full flex items-center justify-center'>
       <form
         onSubmit={handleLogin}
-        className='lg:w-1/3 md:w-1/2 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'>
-        <span className='text-customPalette-black text-xl font-medium title-font mb-5'>Sign in</span>
-        {error && <span className='text-customPalette-red text-md mb-4'>{error}</span>}
+        className='lg:w-1/3 md:w-1/2 sm:w-10/12 bg-customPalette-white shadow-lg rounded-lg p-6 flex flex-col m-10 mr-5'
+      >
+        <span className='text-customPalette-black lg:text-2xl text-xl font-medium title-font mb-5'>
+          Sign in
+        </span>
+        {formState.error && (
+          <span className='text-customPalette-red text-md mb-4'>{formState.error}</span>
+        )}
         <div className='relative mb-4'>
           <label htmlFor='email' className='text-md text-customPalette-black'>
             Email
           </label>
           <input
-            disabled={loading }
+            disabled={formState.loading}
             type='text'
             id='email'
             name='email'
-            value={email}
-            onChange={(e) => {
-              const value = e.target.value;
-              setEmail(value);
-              setEmailValid(value.indexOf('.com') !== -1  && (value.slice(-4)==='.com'));
-              setError('')
-            }}
+            value={loginDetails.email}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {email.length > 0 ? (
-            emailValid ? (
+          {loginDetails.email.length > 0 ? (
+            valid.emailValid ? (
               <span className='text-customPalette-blue text-sm'>Email looks good</span>
             ) : (
               <span className='text-customPalette-red text-sm'>Invalid Email</span>
@@ -96,25 +145,29 @@ const LoginPage = () => {
             Password
           </label>
           <input
-            disabled={ loading}
-            type='password'
+            disabled={formState.loading}
+            type={showPassword ? 'text' : 'password'}
             id='password'
             name='password'
-            value={password}
-            onChange={(e) => {
-              const value = e.target.value;
-              setPassword(value);
-              setPasswordValid(value.length >= 8 && value.length <= 20);
-              setError('')
-            }}
+            value={loginDetails.password}
+            onChange={handleChange}
             className='w-full rounded border border-customPalette-blue py-1 px-3 leading-8 transition-colors duration-200 ease-in-out'
           />
-          {password.length > 0 ? (
-            passwordValid ? (
+          <button
+            title='show password'
+            type='button'
+            onClick={() => setShowPassword((prev) => !prev)}
+            className='absolute right-3 top-8 text-customPalette-blue'
+          >
+            {showPassword ? <Eye /> : <EyeOff />}
+          </button>
+
+          {loginDetails.password.length > 0 ? (
+            valid.passwordValid ? (
               <span className='text-customPalette-blue text-sm'>Password looks good </span>
             ) : (
               <span className='text-customPalette-red text-sm'>
-                Password should be 8-20 characters
+                Password must be at least 8 characters long.
               </span>
             )
           ) : (
@@ -131,9 +184,12 @@ const LoginPage = () => {
           </Link>
         </p>
         <br />
-        <button disabled={loading } className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'>
-          { loading? 'Logging in...' :'Login'}
-          </button>
+        <button
+          disabled={formState.loading}
+          className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
+        >
+          {formState.loading ? 'Logging in...' : 'Login'}
+        </button>
       </form>
     </section>
   );
