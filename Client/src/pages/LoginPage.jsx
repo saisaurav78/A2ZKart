@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
 
 const LoginPage = () => {
+  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const { cart } = useContext(CartContext);
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useContext(AuthContext);
@@ -53,7 +54,7 @@ const LoginPage = () => {
       return prev;
     });
   };
-
+  
     const handleLogin = async (e) => {
       e.preventDefault();
 
@@ -78,10 +79,9 @@ const LoginPage = () => {
         }));
         return;
       }
-
       try {
         const response = await axios.post(
-          'http://localhost:8080/api/user/login',
+          `${BASE_URL}/user/login`,
           { email, password },
           { withCredentials: true },
         );

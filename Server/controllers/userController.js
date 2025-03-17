@@ -9,28 +9,22 @@ export const login = async (req, res) => {
     try {
       const existingUser = await userModel.findOne({ email: email });
       if (!existingUser) {
-        res.clearCookie('token')
         return res.status(404).json({ message: 'Account does not exist' });
       }
       const matched = await bcrypt.compare(password, existingUser.password);
       if (!matched) {
-        res.clearCookie('token')
         return res.status(401).json({ message: 'Invalid email or password' });
       }
 
       const token = jwt.sign({ user: existingUser.user, userId:existingUser._id}, process.env.JWT_SECRET, { expiresIn: "1h" })
       
-      res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: true, secure:false })
-        .status(200).json({ message: 'Login Successful' });
-
-    } catch (error) {
-      console.error('Error in login:', error);
-      res.clearCookie('token')
-      res.status(500).json({ message: 'An error occurred' });
+      res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: 'Strict', secure: process.env.NODE_ENV ==='production' })
+      return res.status(200).json({message:'Login Successful'})
     }
-
-
-
+    catch (error) {
+      console.error('Error in login:', error);
+      return res.status(500).json({ message: 'An error occurred' });
+    }
 }
 
 
