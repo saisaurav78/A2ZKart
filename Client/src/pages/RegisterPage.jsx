@@ -29,28 +29,21 @@ const RegisterPage = () => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|net|org|edu|gov|in|co\.uk|io|tech)$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setDetails((prev) => ({ ...prev, [name]: value }));
-    setValid((prev) => {
-      const newValidity = {
-        emailValid: name === 'email' ? emailRegex.test(value) : prev.emailValid,
-        passwordValid: name === 'password' ? passwordRegex.test(value) : prev.passwordValid,
-        passwordsMatchValid:
-          name === 'confirmPassword' ? value === details.password : prev.passwordsMatchValid,
-      };
+const handleChange = (e) => {
+  const { name, value } = e.target;
 
-      if (
-        newValidity.emailValid !== prev.emailValid ||
-        newValidity.passwordValid !== prev.passwordValid ||
-        newValidity.passwordsMatchValid !== prev.passwordsMatchValid
-      ) {
-        return newValidity;
-      }
+  setDetails((prevDetails) => {
+    const updatedDetails = { ...prevDetails, [name]: value }; 
 
-      return prev;
-    });
-  };
+    setValid((prevValid) => ({
+      emailValid: name === 'email' ? emailRegex.test(value) : prevValid.emailValid,
+      passwordValid: name === 'password' ? passwordRegex.test(value) : prevValid.passwordValid,
+      passwordsMatchValid: updatedDetails.password === updatedDetails.confirmPassword, 
+    }));
+
+    return updatedDetails; 
+  });
+};
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -75,11 +68,11 @@ const RegisterPage = () => {
     try {
       const response = await axios.post('http://localhost:8080/api/user/register', {
         username,
-        email,
+        email: email.toLowerCase(),
         password,
       });
-      alert(response.data.message);
       if (response.status === 201) {
+        response.data?.message && alert(response.data.message);
         navigate('/login');
       }
     } catch (err) {
@@ -89,9 +82,7 @@ const RegisterPage = () => {
              err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
            loading: false,
          }));
-    } finally {
-      setFormState((prev) => ({ ...prev, loading: false }));
-    }
+    } 
   };
 
   return (
