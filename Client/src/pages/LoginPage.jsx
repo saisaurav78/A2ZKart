@@ -7,6 +7,8 @@ import AuthContext from '@/Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
 
+
+
 const LoginPage = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
   const { cart } = useContext(CartContext);
@@ -103,7 +105,11 @@ const LoginPage = () => {
       } finally {
         setFormState((prev) => ({ ...prev, loading: false }));
       }
-    };
+  };
+  
+  const handleOAuth = () => {
+    window.location.assign(`${BASE_URL}/user/google/OAuth`);
+  }
 
   return (
     <section className='w-full h-full flex items-center justify-center'>
@@ -185,10 +191,26 @@ const LoginPage = () => {
         </p>
         <br />
         <button
+          type='submit'
+          title='login'
           disabled={formState.loading}
-          className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
+          className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-2 px-8 focus:outline-none transition hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
         >
           {formState.loading ? 'Logging in...' : 'Login'}
+        </button>
+        <span className='text-xl text-center mt-5'>OR</span>
+        <button
+          onClick={handleOAuth}
+          type='button'
+          title='google login'
+          className='flex items-center justify-center gap-2 px-4 py-2 mt-5 border rounded-md shadow-md bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition'
+        >
+          <img
+            src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png'
+            alt='Google Logo'
+            className='w-5 h-5'
+          />
+          <span>Sign in with Google</span>
         </button>
       </form>
     </section>

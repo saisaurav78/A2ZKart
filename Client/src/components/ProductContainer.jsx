@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext, useCallback } from 'react';
+import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
 import  SearchContext  from '@/Contexts/SearchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
@@ -15,7 +15,7 @@ const ProductContainer = () => {
   const [loading, setLoading] = useState(true);
   const { setVisible } = useContext(VisibilityContext) 
 
-  const loadProducts = async () => {
+  const loadProducts = useCallback( async () => {
     let url;
       if (query) {
         url = `https://dummyjson.com/products/search?q=${query}`;
@@ -37,16 +37,20 @@ const ProductContainer = () => {
     } finally {
       setLoading(false);
     }
-  };
+  },[query,selected]);
+
+const [sortOrder, setSortOrder] = useState('');
+
+const sortedProducts = useMemo(() => {
+  return [...products].sort((a, b) => {
+    if (sortOrder === '<') return a.price - b.price;
+    if (sortOrder === '>') return b.price - a.price;
+    return 0;
+  });
+}, [products, sortOrder]);
 
 const handleSort = useCallback((e) => {
-  const value = e.target.value;
-
-  setProducts((prevProducts) =>
-    [...prevProducts].sort((a, b) => {
-      return value === '<' ? a.price - b.price : b.price - a.price;
-    }),
-  );
+  setSortOrder(e.target.value);
 }, []);
 
 
@@ -56,9 +60,23 @@ const handleSort = useCallback((e) => {
 
   useEffect(() => {
     if (location.state?.showtoast) {
-      toast(location.state.toastmessage, { autoClose: 3000, theme: 'light', type: 'success' });
+      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
     }
   }, [location.state]);
+
+  const addToCart = useCallback(
+    (product) => {
+      toast('Added to Cart', {
+        theme: 'dark',
+        autoClose: 1000,
+        type: 'success',
+        pauseOnHover: false,
+      });
+      dispatch({ type: 'Add', item: product });
+    },
+    [dispatch],
+  );
+
 
   return (
     <>
@@ -75,7 +93,7 @@ const handleSort = useCallback((e) => {
           className='font-1 h-12 bg-customPalette-white text-xl font-normal sm:w-full lg:w-auto'
           onChange={handleSort}
         >
-          <option  value=''>Latest arrivals</option>
+          <option value=''>Latest arrivals</option>
           <option value='>'>Price High to Low</option>
           <option value='<'>Price Low to High</option>
         </select>
@@ -110,7 +128,7 @@ const handleSort = useCallback((e) => {
         ) : products.length <= 0 ? (
           <div className='m-auto mt-[20vh] lg:m-auto text-nowrap text-4xl'>No products found</div>
         ) : (
-          products.map((product) => (
+          sortedProducts.map((product) => (
             <div
               key={product.id}
               className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-5 shadow-md border rounded-md transition-all'
@@ -128,20 +146,10 @@ const handleSort = useCallback((e) => {
               <span className='text-2xl p-2 text-customPalette-red text-center'>
                 {'Price: $' + product.price}
               </span>
-              <button
-                onClick={() => {
-                  toast('Added to Cart', {
-                    theme: 'dark',
-                    autoClose: 1000,
-                    type: 'success',
-                    pauseOnHover: false,
-                  });
-                  dispatch({ type: 'Add', item: product });
-                }}
-                className='bg-customPalette-blue text-customPalette-white text-md font-medium rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow 
-              hover:text-customPalette-black  transition-all '
-              >
-                Add to Cart
+              <button onClick={() => addToCart(product)}
+                className='bg-customPalette-blue text-customPalette-white text-md font-medium
+                rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow
+                hover:text-customPalette-black transition-all ' > Add to Cart
               </button>
             </div>
           ))

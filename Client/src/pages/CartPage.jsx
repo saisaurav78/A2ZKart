@@ -30,7 +30,7 @@ const CartPage = () => {
   }, [cart, discount, cartTotal]);
 
   useEffect(() => {
-    location.state?.showtoast ? toast(location.state.toastmessage,{autoClose:2000, theme:"light", type:"success"}) : '';
+    location.state?.showtoast ? toast(location.state.toastmessage,{autoClose:1500, theme:"light", type:"success"}) : '';
   },[location.state]);
 
   return (

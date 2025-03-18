@@ -217,7 +217,7 @@ const handleChange = (e) => {
         <br />
         <button
           disabled={formState.loading}
-          className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
+          className='text-customPalette-white bg-customPalette-blue border-0 py-2 mt-5 px-8 focus:outline-none transition hover:bg-customPalette-yellow hover:text-customPalette-black rounded text-lg'
         >
           {formState.loading ? 'Registering user...' : 'Register'}
         </button>

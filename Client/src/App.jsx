@@ -56,7 +56,7 @@ const App = () => {
             <Route
               path='/'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   <LandingPage />
                 </Suspense>
               }
@@ -64,7 +64,7 @@ const App = () => {
             <Route
               path='/products'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   <ProductsPage searchQuery={query} />
                 </Suspense>
               }
@@ -72,7 +72,7 @@ const App = () => {
             <Route
               path='/cart'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   <CartPage />
                 </Suspense>
               }
@@ -80,7 +80,7 @@ const App = () => {
             <Route
               path='/login'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   {auth ? <Navigate to='/products' /> : <LoginPage />}
                 </Suspense>
               }
@@ -88,7 +88,7 @@ const App = () => {
             <Route
               path='/register'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   <RegisterPage />
                 </Suspense>
               }
@@ -96,7 +96,7 @@ const App = () => {
             <Route
               path='/checkout'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   <CheckoutPage />
                 </Suspense>
               }
@@ -104,7 +104,7 @@ const App = () => {
             <Route
               path='/orders'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   {auth ? <OrdersPage /> : <Navigate to='/products' />}
                 </Suspense>
               }
@@ -112,7 +112,7 @@ const App = () => {
             <Route
               path='/profile'
               element={
-                <Suspense fallback={Spinner}>
+                <Suspense fallback={<Spinner/>}>
                   {auth ? <ProfilePage /> : <Navigate to='/products' />}
                 </Suspense>
               }

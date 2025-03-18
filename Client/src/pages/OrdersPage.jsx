@@ -1,3 +1,4 @@
+import Spinner from '@/components/ui/Spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 
@@ -5,7 +6,7 @@ const OrdersPage = () => {
   const [data, setData] = useState([]); // State to hold the orders data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-
+  const BASE_URL=import.meta.env.VITE_BASE_URL
   // Fetch orders on component mount
   useEffect(() => {
     fetchOrders();
@@ -16,7 +17,7 @@ const OrdersPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get('http://localhost:8080/api/orders/', {
+      const response = await axios.get(`${BASE_URL}/orders/`, {
         withCredentials: true,
       });
 
@@ -55,12 +56,14 @@ const OrdersPage = () => {
       setLoading(false); 
     }
   };
+
   return (
     <div className='container mx-auto p-6'>
       <h1 className='text-3xl font-semibold text-center mb-6'>Orders Page</h1>
 
-      {loading && <p className='text-center'>Loading orders...</p>}
-
+      {loading && (
+          <Spinner />
+      )}
       {error && <p className='text-red-500 text-center'>{error}</p>}
 
       {!loading && !error && data.length === 0 && <p className='text-center'>No orders found.</p>}
@@ -69,7 +72,7 @@ const OrdersPage = () => {
         <div className='grid grid-cols-1 gap-6'>
           {data.map((order, index) => (
             <div key={index} className='border rounded-md p-2 lg:mx-52 shadow-md'>
-              <h1 className='text-lg font-semibold mb-2'>Order #{index+1}</h1>
+              <h1 className='text-lg font-semibold mb-2'>Order #{index + 1}</h1>
               <div className='mb-4 text-md'>
                 <h3 className='font-medium'>Shipping Address:</h3>
                 <p>{order.shippingAddress.fullname}</p>
@@ -112,7 +115,13 @@ const OrdersPage = () => {
                   <strong>Total:</strong> $
                   {order.orderTotal - (order.discount / 100) * order.orderTotal + order.shipping}
                 </p>
-                <p className={`${order.orderStatus === 'pending' ? 'text-customPalette-red' : 'text-customPalette-blue' } text-xl`}>
+                <p
+                  className={`${
+                    order.orderStatus === 'pending'
+                      ? 'text-customPalette-red'
+                      : 'text-customPalette-blue'
+                  } text-xl`}
+                >
                   <strong>Status:</strong> {order.orderStatus}
                 </p>
               </div>
