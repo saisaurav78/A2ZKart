@@ -1,69 +1,92 @@
 import React, { useEffect, useState, useContext, useCallback, useMemo } from 'react';
-import  SearchContext  from '@/Contexts/SearchContext';
+import SearchContext from '@/Contexts/SearchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
 import { ToastContainer, toast } from 'react-toastify';
 import CartContext from '../Contexts/CartContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
 import { useLocation } from 'react-router-dom';
+import { DrawIcon } from './icons/Icons';
 
 const ProductContainer = () => {
-  const location = useLocation()
+  const location = useLocation();
   const { dispatch } = useContext(CartContext);
-  const { query, selected} = useContext(SearchContext);
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const { setVisible } = useContext(VisibilityContext) 
+  const { query, selected } = useContext(SearchContext);
+  const { setVisible } = useContext(VisibilityContext);
 
-  const loadProducts = useCallback( async () => {
+  const [allProducts, setAllProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currPage, setCurrPage] = useState(1);
+  const [sortOrder, setSortOrder] = useState('');
+
+  const ITEMS_PER_PAGE = 5;
+
+  // Fetch products
+  const loadProducts = useCallback(async () => {
     let url;
-      if (query) {
-        url = `https://dummyjson.com/products/search?q=${query}`;
-      } else {
-        if (selected === 'All') {
-          url = `https://dummyjson.com/products/`;
-        } else {
-          url = `https://dummyjson.com/products/category/${selected}`;
-        }
-      }
+    if (query) {
+      url = `https://dummyjson.com/products/search?q=${query}`;
+    } else {
+      url =
+        selected === 'All'
+          ? `https://dummyjson.com/products/`
+          : `https://dummyjson.com/products/category/${selected}`;
+    }
 
     try {
       setLoading(true);
       const response = await axios.get(url);
-      setProducts(response.data.products);
+      setAllProducts(response.data.products);
     } catch (error) {
-      console.error(error);
       toast.error('Failed to load products. Please try again later.');
+      throw error;
     } finally {
       setLoading(false);
     }
-  },[query,selected]);
-
-const [sortOrder, setSortOrder] = useState('');
-
-const sortedProducts = useMemo(() => {
-  return [...products].sort((a, b) => {
-    if (sortOrder === '<') return a.price - b.price;
-    if (sortOrder === '>') return b.price - a.price;
-    return 0;
-  });
-}, [products, sortOrder]);
-
-const handleSort = useCallback((e) => {
-  setSortOrder(e.target.value);
-}, []);
-
+  }, [query, selected]);
 
   useEffect(() => {
     loadProducts();
   }, [selected, query]);
 
-  useEffect(() => {
-    if (location.state?.showtoast) {
-      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
-    }
-  }, [location.state]);
+  // Sorting products
+  const sortedProducts = useMemo(() => {
+    return [...allProducts].sort((a, b) => {
+      if (sortOrder === '<') return a.price - b.price;
+      if (sortOrder === '>') return b.price - a.price;
+      return 0;
+    });
+  }, [allProducts, sortOrder]);
 
+  // Calculate total pages first
+  const TOTAL_PAGES = Math.ceil(sortedProducts.length / ITEMS_PER_PAGE);
+
+  // Adjust current page if needed
+  useEffect(() => {
+    if (currPage > TOTAL_PAGES) {
+      setCurrPage(1);
+    }
+  }, [sortedProducts]);
+
+  // Scroll to top when pagination changes
+useEffect(() => {
+  window.scrollTo(0,0)
+}, [currPage]);
+
+
+  // Then use TOTAL_PAGES inside paginatedProducts
+  const paginatedProducts = useMemo(() => {
+    return TOTAL_PAGES > 1
+      ? sortedProducts.slice((currPage - 1) * ITEMS_PER_PAGE, currPage * ITEMS_PER_PAGE)
+      : sortedProducts;
+  }, [sortedProducts, currPage]);
+
+  // Handle sorting
+  const handleSort = useCallback((e) => {
+    setSortOrder(e.target.value);
+  }, []);
+
+  // Handle "Add to Cart"
   const addToCart = useCallback(
     (product) => {
       toast('Added to Cart', {
@@ -76,62 +99,54 @@ const handleSort = useCallback((e) => {
     },
     [dispatch],
   );
-
-
+  useEffect(() => {
+    if (location.state?.showtoast) {
+      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
+    }
+  }, [location.state]);
   return (
     <>
-      {' '}
-      <div
-        className='lg:relative text-xl m-5 flex lg:flex-row sm:flex-col sm:items-center justify-evenly flex-wrap lg:items-center sm:space-y-4 lg:space-y-0 
-      lg:justify-between sm:w-[40vw] md:w-[40vw] lg:w-[68vw] w-[40vw]'
-      >
-        <span className='text-customPalette-black text-base text-nowrap lg:ml-40'>
-          Showing {products.length} products
-        </span>
+      {/* Sorting & Product Count */}
+      <section className='max-w-screen-lg mx-auto p-4'>
+        <header className='flex justify-between items-center mb-6'>
+          <p className='text-sm font-medium lg lg:text-lg text-customPalette-black'>
+            Showing page {currPage} of {TOTAL_PAGES} 
+          </p>
 
-        <select
-          className='font-1 h-12 bg-customPalette-white text-xl font-normal sm:w-full lg:w-auto'
-          onChange={handleSort}
-        >
-          <option value=''>Latest arrivals</option>
-          <option value='>'>Price High to Low</option>
-          <option value='<'>Price Low to High</option>
-        </select>
+          <select
+            className='h-12 font-medium px-0 py-2 rounded-md shadow-sm border-2 border-customPalette-blue/50 focus:outline-none '
+            onChange={handleSort}
+            aria-label='Sort products'
+            title='sort'
+          >
+            <option value=''>Latest Arrivals</option>
+            <option value='>'>Price: High to Low</option>
+            <option value='<'>Price: Low to High</option>
+          </select>
+        </header>
         <span
           onClick={() => {
             setVisible(true);
           }}
           className='lg:hidden ml-[100vw] sm:ml-[80vw] md:ml-[80vw]'
         >
-          <svg
-            xmlns='http://www.w3.org/2000/svg'
-            fill='none'
-            viewBox='0 0 24 24'
-            strokeWidth={1.5}
-            stroke='currentColor'
-            className='size-6'
-          >
-            <path
-              strokeLinecap='round'
-              strokeLinejoin='round'
-              d='M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75'
-            />
-          </svg>
+          <DrawIcon/>
         </span>
-      </div>
-      <main
-        className='lg:w-[70vw] lg:mt-4 lg:m-10 lg:p-5 grid lg:grid-cols-3 gap-2
-       md:grid-cols-2 sm:grid-cols-2 sm:mt-10 sm:m-5'
-      >
+      </section>
+
+      {/* Product Listing Grid */}
+      <section className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 max-w-screen-lg mx-auto'>
         {loading ? (
-          <Skeleton count={30} height={'max'} width={'60vw'} />
-        ) : products.length <= 0 ? (
-          <div className='m-auto mt-[20vh] lg:m-auto text-nowrap text-4xl'>No products found</div>
+          <Skeleton count={ITEMS_PER_PAGE} height={'max'} width={'60vw'} enableAnimation />
+        ) : paginatedProducts.length === 0 ? (
+          <p className='text-center text-4xl text-customPalette-black col-span-full'>
+            No products found
+          </p>
         ) : (
-          sortedProducts.map((product) => (
+          paginatedProducts.map((product) => (
             <div
               key={product.id}
-              className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-5 shadow-md border rounded-md transition-all'
+              className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-3 shadow-md border rounded-md transition-all'
             >
               <span className='text-xl p-2 text-center font-medium text-customPalette-black'>
                 {product.title}
@@ -140,21 +155,40 @@ const handleSort = useCallback((e) => {
                 loading='lazy'
                 src={product.images[0]}
                 alt={`${product.title} image`}
-                className='w-full h-60 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
+                className='w-full max-h-52 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
               />
 
               <span className='text-2xl p-2 text-customPalette-red text-center'>
                 {'Price: $' + product.price}
               </span>
-              <button onClick={() => addToCart(product)}
-                className='bg-customPalette-blue text-customPalette-white text-md font-medium
-                rounded-md mt-5 shadow-md p-1 hover:bg-customPalette-yellow
-                hover:text-customPalette-black transition-all ' > Add to Cart
+              <button
+                onClick={() => addToCart(product)}
+                className='bg-customPalette-blue text-white px-4 py-2 rounded-md mt-2 hover:bg-customPalette-yellow hover:text-black transition-all'
+              >
+                Add to Cart
               </button>
             </div>
           ))
         )}
-      </main>
+      </section>
+
+      {/* Pagination Buttons */}
+      <div className='flex justify-center mt-16 space-x-2' aria-label='Pagination'>
+        {Array.from({ length: TOTAL_PAGES }, (_, index) => (
+          <button
+            key={index}
+            onClick={() => setCurrPage(index + 1)}
+            className={`px-4 py-2 text-lg font-medium rounded-md transition-all ${
+              currPage === index + 1
+                ? 'bg-customPalette-blue text-white'
+                : 'bg-customPalette-blue/10 text-customPalette-black hover:bg-customPalette-yellow/50'
+            }`}
+          >
+            {index + 1}
+          </button>
+        ))}
+      </div>
+
       <ToastContainer />
     </>
   );

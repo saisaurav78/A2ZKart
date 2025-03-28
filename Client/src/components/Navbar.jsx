@@ -1,4 +1,5 @@
-import {React, useContext, useState, useEffect} from 'react';
+import { React, useContext, useState, useEffect } from 'react';
+import {BellIcon, CartIcon, MenuIcon, SearchIcon, UserIcon} from '../components/icons/Icons'
 import { NavLink } from 'react-router-dom';
 import DropDown from './DropDown';
 import AuthContext from '@/Contexts/AuthContext';
@@ -26,6 +27,7 @@ import CartContext from '@/Contexts/CartContext';
 import SearchContext from '@/Contexts/SearchContext';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
+
 
 
 
@@ -59,7 +61,7 @@ const Navbar = () => {
     <header className='sticky top-0 z-10'>
       <nav className='bg-customPalette-white shadow-lg w-full lg:flex'>
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
-          <div className='text-customPalette-blue lg:text-3xl text-2xl font-semibold hover:text-customPalette-yellow'>
+          <div className='text-customPalette-blue lg:text-3xl text-xl font-semibold hover:text-customPalette-yellow'>
             <NavLink to='/' aria-label='Homepage'>
               A2ZKart
             </NavLink>
@@ -76,7 +78,7 @@ const Navbar = () => {
               required
               type='text'
               id='search'
-              placeholder='Search...'
+              placeholder='Search ...'
               className='border border-customPalette-blue rounded-md h-10 w-[100%] text-lg text-customPalette-black px-2 
               focus:outline-none focus:border-customPalette-yellow'
               value={inputValue}
@@ -84,24 +86,11 @@ const Navbar = () => {
             />
             <button
               type='submit'
-              className='bg-customPalette-yellow p-2 rounded-md hover:bg-customPalette-blue
+              className='bg-customPalette-yellow lg:p-2 md:p-2 p-1 rounded-md hover:bg-customPalette-blue/70 transition-colors duration-200 ease-in-out
                hover:text-customPalette-white'
               aria-label='Submit Search'
             >
-              <svg
-                xmlns='http://www.w3.org/2000/svg'
-                fill='none'
-                viewBox='0 0 24 24'
-                strokeWidth={2}
-                stroke='currentColor'
-                className='w-5 h-5'
-              >
-                <path
-                  strokeLinecap='round'
-                  strokeLinejoin='round'
-                  d='m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z'
-                />
-              </svg>
+              <SearchIcon />
             </button>
           </form>
 
@@ -121,20 +110,7 @@ const Navbar = () => {
                 className='flex items-center space-x-1 hover:text-customPalette-blue'
                 aria-label='View Cart'
               >
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='w-7 h-7 '
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
-                  />
-                </svg>
+                <CartIcon />
                 <span>Cart</span>
                 <span className='h-5 w-auto min-w-5 rounded-[50%] bg-customPalette-black font-semibold flex items-center justify-center text-customPalette-white bottom-5 right-14 relative'>
                   {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
@@ -143,21 +119,10 @@ const Navbar = () => {
             </li>
             <li className=''>
               {auth ? (
-              <DropDown trigger={user}/>
+                <DropDown trigger={user} />
               ) : (
                 <NavLink to={'/login'} className={'flex hover:text-customPalette-red'}>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='currentColor'
-                    viewBox='0 0 24 24'
-                    className='w-6 h-6'
-                  >
-                    <path
-                      fillRule='evenodd'
-                      d='M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
+                  <UserIcon />
                   Login
                 </NavLink>
               )}
@@ -168,19 +133,7 @@ const Navbar = () => {
             >
               <AlertDialog>
                 <AlertDialogTrigger className='flex'>
-                  <svg
-                    xmlns='http://www.w3.org/2000/svg'
-                    fill='currentColor'
-                    viewBox='0 0 24 24'
-                    className='w-6 h-6'
-                  >
-                    <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
-                    <path
-                      fillRule='evenodd'
-                      d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
-                      clipRule='evenodd'
-                    />
-                  </svg>
+                  <BellIcon />
                   Notifications
                 </AlertDialogTrigger>
                 <AlertDialogContent className='bg-customPalette-white text-customPalette-black'>
@@ -197,23 +150,89 @@ const Navbar = () => {
               </AlertDialog>
             </li>
           </ul>
-          <span className='lg:hidden'>
+          <span className='lg:hidden relative left-6'>
+            <Sheet open={open} onOpenChange={setOpen}>
+              <SheetTrigger
+                aria-label='Open Menu'
+                className='p-4 text-customPalette-red transition duration-200 hover:text-customPalette-blue'
+              >
+                <MenuIcon />
+              </SheetTrigger>
+              <SheetContent className='text-customPalette-white font-bold text-lg p-6 bg-customPalette-black'>
+                <SheetHeader>
+                  <SheetTitle className='text-xl font-semibold mb-4'>Explore Menu</SheetTitle>
+                  <SheetDescription className='space-y-6 list-none text-customPalette-white'>
+                    <li>
+                      <NavLink
+                        to='/products'
+                        className='flex items-center space-x-3 text-customPalette-blue transition duration-200 hover:text-customPalette-yellow'
+                        aria-label='View Products'
+                      >
+                        <span>Products</span>
+                      </NavLink>
+                    </li>
+                    <li>
+                      <NavLink
+                        to='/cart'
+                        className='flex items-center space-x-3 text-customPalette-yellow transition duration-200 hover:text-customPalette-blue'
+                        aria-label='View Cart'
+                      >
+                        <CartIcon />
+                        <span>Cart</span>
+                        <span className='w-4 h-4 text-xs font-semibold rounded-full bg-customPalette-red flex items-center justify-center text-customPalette-white relative right-16 bottom-5'>
+                          {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
+                        </span>
+                      </NavLink>
+                    </li>
+                    <li className='mr-28'>
+                      {auth ? (
+                        <DropDown trigger={user} />
+                      ) : (
+                        <NavLink
+                          to='/login'
+                          className='flex items-center space-x-2 text-customPalette-white transition duration-200 hover:text-customPalette-red'
+                        >
+                          <UserIcon />
+                          <span>Login</span>
+                        </NavLink>
+                      )}
+                    </li>
+                    <li
+                      title='notifications'
+                      className='flex items-center space-x-2 cursor-pointer text-customPalette-white transition duration-200 hover:text-customPalette-blue'
+                    >
+                      <AlertDialog>
+                        <AlertDialogTrigger className='flex items-center space-x-2'>
+                          <BellIcon />
+                          <span>Notifications</span>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className='bg-customPalette-white text-customPalette-black p-6 rounded-lg shadow-lg'>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className='text-lg font-semibold'>
+                              No notifications
+                            </AlertDialogTitle>
+                            <AlertDialogDescription className='text-sm'>
+                              We'll notify you when there are updates.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className='px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300'>
+                              Ok
+                            </AlertDialogCancel>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </li>
+                  </SheetDescription>
+                </SheetHeader>
+              </SheetContent>
+            </Sheet>
+          </span>
+
+          {/* <span className='lg:hidden'>
             <Sheet open={open} onOpenChange={setOpen}>
               <SheetTrigger aria-label='Open Menu' className='text-customPalette-red p-4'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  strokeWidth={1.5}
-                  stroke='currentColor'
-                  className='size-6 transition-transform hover:scale-110 duration-300'
-                >
-                  <path
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    d='M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5'
-                  />
-                </svg>
+               <MenuIcon/>
               </SheetTrigger>
               <SheetContent className='text-customPalette-white font-bold fs-1'>
                 <SheetHeader>
@@ -234,20 +253,7 @@ const Navbar = () => {
                         className='flex items-center space-x-2 hover:text-customPalette-blue'
                         aria-label='View Cart'
                       >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='none'
-                          viewBox='0 0 24 24'
-                          strokeWidth={1.5}
-                          stroke='currentColor'
-                          className='w-7 h-7'
-                        >
-                          <path
-                            strokeLinecap='round'
-                            strokeLinejoin='round'
-                            d='M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z'
-                          />
-                        </svg>
+                       <CartIcon/>
                         <span>Cart</span>
                         <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
                           {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
@@ -255,25 +261,14 @@ const Navbar = () => {
                       </NavLink>
                     </li>
                     <li className='text-customPalette-white'>
-                      <NavLink
-                        to='/login'
-                        className='flex items-center space-x-2 hover:text-customPalette-blue'
-                        aria-label='Sign In'
-                      >
-                        <svg
-                          xmlns='http://www.w3.org/2000/svg'
-                          fill='currentColor'
-                          viewBox='0 0 24 24'
-                          className='w-6 h-6'
-                        >
-                          <path
-                            fillRule='evenodd'
-                            d='M18.685 19.097A9.723 9.723 0 0 0 21.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 0 0 3.065 7.097A9.716 9.716 0 0 0 12 21.75a9.716 9.716 0 0 0 6.685-2.653Zm-12.54-1.285A7.486 7.486 0 0 1 12 15a7.486 7.486 0 0 1 5.855 2.812A8.224 8.224 0 0 1 12 20.25a8.224 8.224 0 0 1-5.855-2.438ZM15.75 9a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z'
-                            clipRule='evenodd'
-                          />
-                        </svg>
-                        <span>Sign In</span>
-                      </NavLink>
+                     {auth ? (
+              <DropDown trigger={user}/>
+              ) : (
+                <NavLink to={'/login'} className={'flex hover:text-customPalette-red'}>
+                <UserIcon/>
+                  Login
+                </NavLink>
+              )}
                     </li>
                     <li
                       title='notifications'
@@ -281,19 +276,7 @@ const Navbar = () => {
                     >
                       <AlertDialog>
                         <AlertDialogTrigger className='flex'>
-                          <svg
-                            xmlns='http://www.w3.org/2000/svg'
-                            fill='currentColor'
-                            viewBox='0 0 24 24'
-                            className='w-6 h-6'
-                          >
-                            <path d='M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z' />
-                            <path
-                              fillRule='evenodd'
-                              d='M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 18c0-.034 0-.067.002-.1a25.05 25.05 0 0 0 4.496 0l.002.1a2.25 2.25 0 1 1-4.5 0Z'
-                              clipRule='evenodd'
-                            />
-                          </svg>
+                         <BellIcon/>
                           Notifications
                         </AlertDialogTrigger>
                         <AlertDialogContent className='bg-customPalette-white text-customPalette-black'>
@@ -313,7 +296,7 @@ const Navbar = () => {
                 </SheetHeader>
               </SheetContent>
             </Sheet>
-          </span>
+          </span> */}
         </div>
       </nav>
     </header>

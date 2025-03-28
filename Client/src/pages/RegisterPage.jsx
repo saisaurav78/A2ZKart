@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from '../components/icons/Icons';
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -29,39 +29,43 @@ const RegisterPage = () => {
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9-]+\.(com|net|org|edu|gov|in|co\.uk|io|tech)$/;
   const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&.])[A-Za-z\d@$!%*?&.]{8,}$/;
 
-const handleChange = (e) => {
-  const { name, value } = e.target;
+  const handleChange = (e) => {
+    const { name, value } = e.target;
 
-  setDetails((prevDetails) => {
-    const updatedDetails = { ...prevDetails, [name]: value }; 
+    setDetails((prevDetails) => {
+      const updatedDetails = { ...prevDetails, [name]: value };
 
-    setValid((prevValid) => ({
-      emailValid: name === 'email' ? emailRegex.test(value) : prevValid.emailValid,
-      passwordValid: name === 'password' ? passwordRegex.test(value) : prevValid.passwordValid,
-      passwordsMatchValid: updatedDetails.password === updatedDetails.confirmPassword, 
-    }));
+      setValid((prevValid) => ({
+        emailValid: name === 'email' ? emailRegex.test(value) : prevValid.emailValid,
+        passwordValid: name === 'password' ? passwordRegex.test(value) : prevValid.passwordValid,
+        passwordsMatchValid: updatedDetails.password === updatedDetails.confirmPassword,
+      }));
 
-    return updatedDetails; 
-  });
-};
+      return updatedDetails;
+    });
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setFormState({ error: '', loading: true });
 
-    const { username, email, password } = details
-    
-      if (!email.trim() || !password.trim() || !username.trim()) {
-        setFormState((prev) => ({
-          ...prev,
-          error: 'All fields are required',
-          loading: false,
-        }));
-        return;
-      }
+    const { username, email, password } = details;
+
+    if (!email.trim() || !password.trim() || !username.trim()) {
+      setFormState((prev) => ({
+        ...prev,
+        error: 'All fields are required',
+        loading: false,
+      }));
+      return;
+    }
 
     if (!valid.emailValid || !valid.passwordValid || !valid.passwordsMatchValid) {
-      setFormState((prev) => ({...prev, error:'Please ensure all fields are valid', loading:false}))
+      setFormState((prev) => ({
+        ...prev,
+        error: 'Please ensure all fields are valid',
+        loading: false,
+      }));
       return;
     }
 
@@ -76,13 +80,13 @@ const handleChange = (e) => {
         navigate('/login');
       }
     } catch (err) {
-         setFormState((prev) => ({
-           ...prev,
-           error:
-             err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
-           loading: false,
-         }));
-    } 
+      setFormState((prev) => ({
+        ...prev,
+        error:
+          err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
+        loading: false,
+      }));
+    }
   };
 
   return (

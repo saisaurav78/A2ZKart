@@ -1,13 +1,11 @@
 import axios from 'axios';
 import React, { useContext, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, GoogleIcon } from '../components/icons/Icons';
 
 import AuthContext from '@/Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
-
-
 
 const LoginPage = () => {
   const BASE_URL = import.meta.env.VITE_BASE_URL;
@@ -56,60 +54,60 @@ const LoginPage = () => {
       return prev;
     });
   };
-  
-    const handleLogin = async (e) => {
-      e.preventDefault();
 
-      setFormState({ error: '', loading: true });
+  const handleLogin = async (e) => {
+    e.preventDefault();
 
-      const { email, password } = loginDetails;
+    setFormState({ error: '', loading: true });
 
-      if (!email.trim() || !password.trim()) {
-        setFormState((prev) => ({
-          ...prev,
-          error: 'Email and password are required.',
-          loading: false,
-        }));
-        return;
+    const { email, password } = loginDetails;
+
+    if (!email.trim() || !password.trim()) {
+      setFormState((prev) => ({
+        ...prev,
+        error: 'Email and password are required.',
+        loading: false,
+      }));
+      return;
+    }
+
+    if (!valid.emailValid || !valid.passwordValid) {
+      setFormState((prev) => ({
+        ...prev,
+        error: 'Please ensure all fields are valid.',
+        loading: false,
+      }));
+      return;
+    }
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/user/login`,
+        { email, password },
+        { withCredentials: true },
+      );
+
+      if (response.status === 200) {
+        setAuth(true);
+        navigate(cart.length > 0 ? '/cart' : '/products', {
+          state: { showtoast: true, toastmessage: response.data.message },
+        });
       }
-
-      if (!valid.emailValid || !valid.passwordValid) {
-        setFormState((prev) => ({
-          ...prev,
-          error: 'Please ensure all fields are valid.',
-          loading: false,
-        }));
-        return;
-      }
-      try {
-        const response = await axios.post(
-          `${BASE_URL}/user/login`,
-          { email, password },
-          { withCredentials: true },
-        );
-
-        if (response.status === 200) {
-          setAuth(true);
-          navigate(cart.length > 0 ? '/cart' : '/products', {
-            state: { showtoast: true, toastmessage: response.data.message },
-          });
-        }
-      } catch (err) {
-        setAuth(false);
-        setFormState((prev) => ({
-          ...prev,
-          error:
-            err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
-          loading: false,
-        }));
-      } finally {
-        setFormState((prev) => ({ ...prev, loading: false }));
-      }
+    } catch (err) {
+      setAuth(false);
+      setFormState((prev) => ({
+        ...prev,
+        error:
+          err.response?.data?.message || 'An unexpected error occurred. Please try again later.',
+        loading: false,
+      }));
+    } finally {
+      setFormState((prev) => ({ ...prev, loading: false }));
+    }
   };
-  
+
   const handleOAuth = () => {
     window.location.assign(`${BASE_URL}/user/google/OAuth`);
-  }
+  };
 
   return (
     <section className='w-full h-full flex items-center justify-center'>
@@ -205,11 +203,7 @@ const LoginPage = () => {
           title='google login'
           className='flex items-center justify-center gap-2 px-4 py-2 mt-5 border rounded-md shadow-md bg-white text-gray-700 hover:bg-gray-100 active:bg-gray-200 transition'
         >
-          <img
-            src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/1024px-Google_%22G%22_logo.svg.png'
-            alt='Google Logo'
-            className='w-5 h-5'
-          />
+        <GoogleIcon/>
           <span>Sign in with Google</span>
         </button>
       </form>

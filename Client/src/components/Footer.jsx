@@ -29,25 +29,25 @@ const Footer = () => {
         <div className='flex flex-col items-start justify-evenly mb-4 md:ml-10'>
           <h1 className='text-xl hover:text-customPalette-blue'>Consumer Policy</h1>
           <NavLink
-            to='/contact'
+            to=''
             className='hover:text-customPalette-yellow hover:mx-2 text-customPalette-blue transition-all'
           >
             <p>Contact Us</p>
           </NavLink>
           <NavLink
-            to='/privacy-policy'
+            to=''
             className='hover:text-customPalette-yellow hover:mx-2 text-customPalette-blue transition-all'
           >
             <p>Privacy Policy</p>
           </NavLink>
           <NavLink
-            to='/terms'
+            to=''
             className='hover:text-customPalette-yellow hover:mx-2 text-customPalette-blue transition-all'
           >
             <p>T&C</p>
           </NavLink>
           <NavLink
-            to='/refund-policy'
+            to=''
             className='hover:text-customPalette-yellow hover:mx-2 text-customPalette-blue transition-all'
           >
             <p>Refund Policy</p>
@@ -56,19 +56,19 @@ const Footer = () => {
         <div className='flex flex-col items-start justify-evenly mb-4 md:ml-10'>
           <h1 className='text-xl hover:text-customPalette-blue'>Follow Us</h1>
           <NavLink
-            to='/instagram'
+            to=''
             className='hover:text-customPalette-yellow text-customPalette-blue transition-all'
           >
             <p>Instagram</p>
           </NavLink>
           <NavLink
-            to='/facebook'
+            to=''
             className='hover:text-customPalette-yellow  text-customPalette-blue transition-all'
           >
             <p>Facebook</p>
           </NavLink>
           <NavLink
-            to='/twitter'
+            to=''
             className='hover:text-customPalette-yellow text-customPalette-blue transition-all'
           >
             <p>Twitter</p>

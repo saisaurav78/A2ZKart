@@ -64,12 +64,11 @@ const LandingPage = () => {
       </section>
 
       <section className='w-full h-full flex flex-col items-center justify-center mt-5'>
-        <span className='text-2xl lg:text-3xl text-customPalette-black p-8 text-nowrap '>
+        <span className='text-xl lg:text-3xl text-customPalette-black p-8 text-nowrap '>
           Your One Stop Shopping Site
         </span>
         <button
           onClick={() => {
-            window.scrollTo(0, 0); // Reset scroll to top
             navigate('/products'); // Navigate to the new page
           }}
           className='p-2 bg-customPalette-yellow m-4 text-center text-customPalette-black
