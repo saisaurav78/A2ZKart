@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useContext, useRef, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff, GoogleIcon } from '../components/icons/Icons';
 
@@ -89,7 +89,7 @@ const LoginPage = () => {
       if (response.status === 200) {
         setAuth(true);
         navigate(cart.length > 0 ? '/cart' : '/products', {
-          state: { showtoast: true, toastmessage: response.data.message },
+          state: { showtoast: true, toastmessage: response.data.message, toastType:"Success" },
         });
       }
     } catch (err) {

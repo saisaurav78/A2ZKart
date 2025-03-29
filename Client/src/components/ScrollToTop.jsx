@@ -1,23 +1,30 @@
 import { useState, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 
 const ToTopButton = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const location = useLocation();
 
   useEffect(() => {
     const handleScroll = () => {
-      setIsVisible(window.scrollY > 100); 
+      setIsVisible(window.scrollY > 100);
     };
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  useEffect(() => {
+     document.documentElement.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return isVisible ? (
-    <button title='back to top'
+    <button
+      title='back to top'
       aria-label='back to top button'
       onClick={scrollToTop}
       className='fixed bottom-5 right-5 p-3 bg-customPalette-blue text-white rounded-full shadow-lg'

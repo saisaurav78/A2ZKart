@@ -13,7 +13,6 @@ import {
 } from '@/components/ui/sheet';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogCancel,
   AlertDialogContent,
   AlertDialogDescription,
@@ -58,7 +57,7 @@ const Navbar = () => {
     };
 
   return (
-    <header className='sticky top-0 z-10'>
+    <header>
       <nav className='bg-customPalette-white shadow-lg w-full lg:flex'>
         <div className='container mx-auto flex justify-between items-center py-4 px-6'>
           <div className='text-customPalette-blue lg:text-3xl text-xl font-semibold hover:text-customPalette-yellow'>
@@ -78,7 +77,7 @@ const Navbar = () => {
               required
               type='text'
               id='search'
-              placeholder='Search ...'
+              placeholder='Search...'
               className='border border-customPalette-blue rounded-md h-10 w-[100%] text-lg text-customPalette-black px-2 
               focus:outline-none focus:border-customPalette-yellow'
               value={inputValue}
@@ -184,7 +183,7 @@ const Navbar = () => {
                         </span>
                       </NavLink>
                     </li>
-                    <li className='mr-28'>
+                    <li className='mr-36'>
                       {auth ? (
                         <DropDown trigger={user} />
                       ) : (
@@ -228,75 +227,6 @@ const Navbar = () => {
               </SheetContent>
             </Sheet>
           </span>
-
-          {/* <span className='lg:hidden'>
-            <Sheet open={open} onOpenChange={setOpen}>
-              <SheetTrigger aria-label='Open Menu' className='text-customPalette-red p-4'>
-               <MenuIcon/>
-              </SheetTrigger>
-              <SheetContent className='text-customPalette-white font-bold fs-1'>
-                <SheetHeader>
-                  <SheetTitle className='text-lg font-semibold mb-2'>Explore Menu</SheetTitle>
-                  <SheetDescription className='space-y-4 list-none text-customPalette-white'>
-                    <li className='text-customPalette-blue'>
-                      <NavLink
-                        to='/products'
-                        className='hover:text-customPalette-blue flex items-center space-x-2'
-                        aria-label='View Products'
-                      >
-                        <span>Products</span>
-                      </NavLink>
-                    </li>
-                    <li className='text-customPalette-yellow'>
-                      <NavLink
-                        to='/cart'
-                        className='flex items-center space-x-2 hover:text-customPalette-blue'
-                        aria-label='View Cart'
-                      >
-                       <CartIcon/>
-                        <span>Cart</span>
-                        <span className='w-4 h-4 rounded-full lg:bg-customPalette-black flex items-center justify-center text-customPalette-white bottom-4 right-14 relative'>
-                          {cart.reduce((acc, cartItem) => acc + cartItem.quantity, 0)}
-                        </span>
-                      </NavLink>
-                    </li>
-                    <li className='text-customPalette-white'>
-                     {auth ? (
-              <DropDown trigger={user}/>
-              ) : (
-                <NavLink to={'/login'} className={'flex hover:text-customPalette-red'}>
-                <UserIcon/>
-                  Login
-                </NavLink>
-              )}
-                    </li>
-                    <li
-                      title='notifications'
-                      className='flex items-center space-x-1 hover:text-customPalette-blue cursor-pointer'
-                    >
-                      <AlertDialog>
-                        <AlertDialogTrigger className='flex'>
-                         <BellIcon/>
-                          Notifications
-                        </AlertDialogTrigger>
-                        <AlertDialogContent className='bg-customPalette-white text-customPalette-black'>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>There are no notifications</AlertDialogTitle>
-                            <AlertDialogDescription>
-                              We'll notify you when there are notifications
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Ok</AlertDialogCancel>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                    </li>
-                  </SheetDescription>
-                </SheetHeader>
-              </SheetContent>
-            </Sheet>
-          </span> */}
         </div>
       </nav>
     </header>

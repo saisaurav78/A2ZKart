@@ -4,7 +4,8 @@ import CartContext from '@/Contexts/CartContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '@/Contexts/AuthContext';
-import { toast, ToastContainer } from 'react-toastify';
+import {  toast } from 'react-hot-toast';
+
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -29,20 +30,21 @@ const CheckoutPage = () => {
     zipcode: '',
     country: '',
     phone: '',
+    saveAddress:false
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (value.trim() !== '') {
-      setValid(true);
-    } else {
-      setValid(false);
+    const { name, type, checked, value } = e.target;
+   if (type !== 'checkbox') {
+     setValid(value.trim() !== ''); 
     }
+
     setDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: value,
+      [name]: type==='checkbox'? checked: value,
     }));
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -75,7 +77,7 @@ const CheckoutPage = () => {
 
       if (!isDetailsValid) {
         setValid(false);
-        toast('Ensure All fields are valid', { type: 'error' });
+        toast.error('Ensure All fields are valid');
         return;
       }
       const uri = 'http://localhost:8080/api/orders';
@@ -93,7 +95,7 @@ const CheckoutPage = () => {
 
       const response = await axios.post(uri, payload, config);
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         dispatch({type:'CLEAR_CART'})
         localStorage.removeItem('a2zkart')
         navigate('/thankyou', { state: { orderSuccess: true } });
@@ -116,11 +118,11 @@ const CheckoutPage = () => {
       });
 
       if (response.status === 200 && response.data.message.length > 0) {
-        toast('Existing address found', { autoClose: 3000, type: 'success' });
+        toast.success('Existing address found',{duration:3000});
         setDetails(response.data.message[0]);
       }
     } catch (error) {
-      toast('No address found', { autoClose: 3000, theme: 'dark', type: 'warning' });
+      toast.error('No address found', { duration: 3000});
     }
   };
   useEffect(() => {
@@ -139,15 +141,14 @@ const CheckoutPage = () => {
 
   return (
     <>
-      <section className='w-full h-full flex flex-col lg:flex-row '>
-        <ToastContainer />
-        <div className='container w-[100%] m-auto lg:w-[60%] p-5 flex flex-col lg:ml-28'>
-          <span className='text-4xl w-full p-3  text-customPalette-black font-semibold'>
+      <section className='w-full h-full flex flex-col lg:flex-row'>
+        <div className='container w-[100%] m-auto lg:w-[60%] p-5 flex-col lg:ml-28 flex items-center justify-center lg:items-start'>
+          <span className='text-2xl lg:text-4xl w-full p-3  text-center lg:text-start text-customPalette-black font-semibold'>
             Shipping Details
           </span>
 
           <form
-            className='flex flex-col justify-start items-start w-[80%] gap-4 my-5'
+            className='flex flex-col justify-start items-start w-[90%] gap-4 my-5'
             onSubmit={handleSubmit}
           >
             <div className='flex flex-col w-full'>
@@ -319,28 +320,29 @@ const CheckoutPage = () => {
             <div className='flex flex-col w-full'>
               <div className='flex items-center space-x-2'>
                 <input
-                  type='checkbox'
-                  id='saveaddress'
+                  type="checkbox"
+                  id='saveAddress'
                   className='border-2 h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
-                  name='saveaddress'
-                  required
+                  name='saveAddress'
+                  onChange={handleChange}
+                  checked={details.saveAddress}
                 />
-                <label htmlFor='saveaddress' className='text-lg text-gray-700 font-medium'>
+                <label htmlFor='saveAddress' className='text-lg text-gray-700 font-medium'>
                   Save Address for future purchases
                 </label>
               </div>
             </div>
 
             <div className='w-full flex lg:flex-row '>
-              <NavLink to={'/cart'} className='w-[50%] p-4 text-customPalette-black font-semibold'>
+              <NavLink to={'/cart'} className='w-[100%] p-4 text-customPalette-black font-semibold'>
                 Return to cart
               </NavLink>
-              <button
+              {/* <button
                 type='submit'
-                className='w-[50%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
+                className='w-[50%] h-[25%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
               >
                 {valid ? 'Add Address' : 'Update '}
-              </button>
+              </button> */}
             </div>
           </form>
         </div>

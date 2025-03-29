@@ -2,7 +2,7 @@ import React, { useEffect, useState, useContext, useCallback, useMemo } from 're
 import SearchContext from '@/Contexts/SearchContext';
 import axios from 'axios';
 import Skeleton from 'react-loading-skeleton';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast} from 'react-hot-toast'
 import CartContext from '../Contexts/CartContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
 import { useLocation } from 'react-router-dom';
@@ -90,20 +90,23 @@ useEffect(() => {
   const addToCart = useCallback(
     (product) => {
       toast('Added to Cart', {
-        theme: 'dark',
-        autoClose: 1000,
+       duration:3000,
         type: 'success',
-        pauseOnHover: false,
       });
       dispatch({ type: 'Add', item: product });
     },
     [dispatch],
   );
-  useEffect(() => {
-    if (location.state?.showtoast) {
-      toast(location.state.toastmessage, { autoClose: 2000, theme: 'light', type: 'success' });
-    }
-  }, [location.state]);
+useEffect(() => {
+  if (location.state?.showtoast) {
+    const { toastType, toastmessage } = location.state;
+    toastType === 'Success'
+      ? toast.success(toastmessage, { duration: 3000 })
+      : toast(toastmessage, { duration: 3000 })
+  }
+}, [location.state]);
+
+
   return (
     <>
       {/* Sorting & Product Count */}
@@ -188,8 +191,6 @@ useEffect(() => {
           </button>
         ))}
       </div>
-
-      <ToastContainer />
     </>
   );
 };

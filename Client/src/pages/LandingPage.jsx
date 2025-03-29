@@ -24,40 +24,44 @@ const LandingPage = () => {
     <>
       <section className='w-full p-1  relative'>
         <Slider {...settings}>
-
           <div>
             <img
-              src='/Images/HeroBanner.png'
+              src='/Images/HeroBanner.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
+              loading='lazy'
             />
           </div>
           <div>
             <img
-              src='/Images/Sale.png'
+              src='/Images/Sale.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
+              loading='lazy'
             />
           </div>
           <div>
             <img
-              src='/Images/Slider-Image-1.png'
+              src='/Images/Slider-Image-1.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
+              loading='lazy'
             />
           </div>
           <div>
             <img
-              src='/Images/Slider-Image-2.png'
+              src='/Images/Slider-Image-2.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
+              loading='lazy'
             />
           </div>
           <div>
             <img
-              src='/Images/Slider-Image-3.png'
+              src='/Images/Slider-Image-3.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
+              loading='lazy'
             />
           </div>
         </Slider>

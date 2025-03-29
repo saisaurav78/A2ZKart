@@ -9,6 +9,7 @@ import Spinner from './components/ui/Spinner';
 import ProfilePage from './pages/ProfilePage';
 import ThankYou from './pages/ThankYou';
 import ToTopButton from './components/ScrollToTop';
+import { Toaster } from 'react-hot-toast';
 
 const LandingPage = React.lazy(() => import('./pages/LandingPage'));
 const ProductsPage = React.lazy(() => import('./pages/ProductsPage'));
@@ -49,7 +50,7 @@ const App = () => {
           </div>
         </div>
       ) : (
-        <>
+          <>  <Toaster position='top-center' reverseOrder={ false} />
           <Navbar onInputChange={onInputChange} />
           <Routes key={location.pathname}>
             <Route
