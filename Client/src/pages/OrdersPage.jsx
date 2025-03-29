@@ -1,12 +1,12 @@
 import Spinner from '@/components/ui/Spinner';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
+const BASE_URL=import.meta.env.VITE_BASE_URL
 
 const OrdersPage = () => {
   const [data, setData] = useState([]); // State to hold the orders data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
-  const BASE_URL=import.meta.env.VITE_BASE_URL
   // Fetch orders on component mount
   useEffect(() => {
     fetchOrders();
@@ -17,7 +17,7 @@ const OrdersPage = () => {
     setLoading(true);
     setError(null);
     try {
-      const response = await axios.get(`${BASE_URL}/orders/`, {
+      const response = await axios.get(`${BASE_URL}/orders`, {
         withCredentials: true,
       });
 

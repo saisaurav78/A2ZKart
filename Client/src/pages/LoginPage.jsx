@@ -6,9 +6,9 @@ import { Eye, EyeOff, GoogleIcon } from '../components/icons/Icons';
 import AuthContext from '@/Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import CartContext from '@/Contexts/CartContext';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const LoginPage = () => {
-  const BASE_URL = import.meta.env.VITE_BASE_URL;
   const { cart } = useContext(CartContext);
   const [showPassword, setShowPassword] = useState(false);
   const { setAuth } = useContext(AuthContext);

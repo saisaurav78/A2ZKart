@@ -2,12 +2,12 @@ import axios from 'axios';
 import { createContext, useEffect, useState } from 'react';
 
 const AuthContext = createContext();
+const BASE_URL=import.meta.env.VITE_BASE_URL 
 
 export const AuthContextProvider = ({ children }) => {
   const [auth, setAuth] = useState(false);
   const [user, setUser] = useState('');
 
-  const BASE_URL=import.meta.env.VITE_BASE_URL || 'http://localhost:8080/api'
 
 
   const fetchUser = async () => {

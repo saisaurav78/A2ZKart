@@ -14,7 +14,7 @@ app.use(cookieParser())
 dotenv.config()
 app.use(cors(
     {
-        origin: process.env.FRONTEND_URI || 'http://localhost:5173',
+        origin: process.env.FRONTEND_URI,
         credentials:true
     }
 ))
@@ -33,6 +33,10 @@ app.use('/api/address', addressRoute)
 app.use('/api/cart', cartRoute)
 
 app.use('/api/orders', orderRoute)
+
+app.get('/', (req, res) => {
+    res.send('Server is Running')
+})
 
 app.listen(PORT,() => {
     console.log(`server is running on http://localhost:${PORT}`)

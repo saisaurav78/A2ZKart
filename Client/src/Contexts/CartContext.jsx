@@ -4,8 +4,11 @@ import CartReducer from './CartReducer';
 import axios from 'axios';
 import { initializer } from './CartReducer';
  const CartContext = createContext();
-
+ const BASE_URL = import.meta.env.VITE_BASE_URL; 
+ 
 export const CartContextProvider = ({ children }) => {
+  
+
   const auth = useContext(AuthContext);
   const [cart, dispatch] = useReducer(CartReducer, [], initializer);
   const [cartTotal, setCartTotal] = useState(0);
@@ -28,7 +31,7 @@ export const CartContextProvider = ({ children }) => {
     try {
       console.log('sending cart to backend....');
       const response = await axios.post(
-        'http://localhost:8080/api/cart/',
+        `${BASE_URL}/cart/`,
         {
           cartItems: filteredCart,
           appliedDiscount: discount,
@@ -55,7 +58,7 @@ export const CartContextProvider = ({ children }) => {
  const getCart = async () => {
    try {
      console.log('Getting cart from backend...');
-     const response = await axios.get('http://localhost:8080/api/cart', { withCredentials: true });
+     const response = await axios.get(`${BASE_URL}/cart/`, { withCredentials: true });
      if (response.status === 200 || response.status === 201) {
        const fetchedCart = response.data.message.cartItems;
 

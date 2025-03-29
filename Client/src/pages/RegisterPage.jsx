@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from '../components/icons/Icons';
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const RegisterPage = () => {
   const navigate = useNavigate();
@@ -70,7 +71,7 @@ const RegisterPage = () => {
     }
 
     try {
-      const response = await axios.post('http://localhost:8080/api/user/register', {
+      const response = await axios.post(`${BASE_URL}/user/register`, {
         username,
         email: email.toLowerCase(),
         password,

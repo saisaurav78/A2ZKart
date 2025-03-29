@@ -5,7 +5,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '@/Contexts/AuthContext';
 import {  toast } from 'react-hot-toast';
-
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
@@ -46,24 +46,6 @@ const CheckoutPage = () => {
   };
   
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        'http://localhost:8080/api/address',
-        { details },
-        { withCredentials: true },
-      );
-
-      console.log(response.data);
-      if (response.status === 201 || 200) {
-        alert(response.data.message);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleOrder = async (paymentMethod) => {
     try {
       const isDetailsValid =
@@ -80,7 +62,7 @@ const CheckoutPage = () => {
         toast.error('Ensure All fields are valid');
         return;
       }
-      const uri = 'http://localhost:8080/api/orders';
+      const uri = `${BASE_URL}/orders/`;
       const payload = {
         order: cart,
         orderTotal: cartTotal,
@@ -113,7 +95,7 @@ const CheckoutPage = () => {
 
   const fetchAddress = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/address/', {
+      const response = await axios.get(`${BASE_URL}/address`, {
         withCredentials: true,
       });
 
@@ -148,9 +130,7 @@ const CheckoutPage = () => {
           </span>
 
           <form
-            className='flex flex-col justify-start items-start w-[90%] gap-4 my-5'
-            onSubmit={handleSubmit}
-          >
+            className='flex flex-col justify-start items-start w-[90%] gap-4 my-5'>
             <div className='flex flex-col w-full'>
               <label htmlFor='fullname' className='text-lg font-medium mb-1'>
                 Full Name:
