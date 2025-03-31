@@ -19,7 +19,7 @@ export const login = async (req, res) => {
 
       const token = jwt.sign({ user: existingUser.user, userId:existingUser._id}, process.env.JWT_SECRET, { expiresIn: "1h" })
       
-      res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: 'Strict', secure: process.env.NODE_ENV ==='production' })
+      res.cookie('token', token, { httpOnly: true, maxAge: 3600000, sameSite: 'None', secure: process.env.NODE_ENV ==='production' })
       return res.status(200).json({message:'Login Successful'})
     }
     catch (error) {
@@ -109,7 +109,7 @@ export const OAuthCB = async (req, res) => {
           res.cookie('token', token, {
             httpOnly: true,
             maxAge: 3600000,
-            sameSite: 'Strict',
+            sameSite: 'None',
             secure: process.env.NODE_ENV === 'production',
           });
 
