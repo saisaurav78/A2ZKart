@@ -11,7 +11,44 @@ const CheckoutPage = () => {
   const navigate = useNavigate();
   const [valid, setValid] = useState(true);
   const { auth } = useContext(AuthContext);
-  const { cart, cartTotal, setCartTotal, discount, dispatch} = useContext(CartContext);
+  const { cart, cartTotal, setCartTotal, discount, dispatch } = useContext(CartContext);
+  const states = [
+    { value: 'AP', name: 'Andhra Pradesh' },
+    { value: 'AR', name: 'Arunachal Pradesh' },
+    { value: 'AS', name: 'Assam' },
+    { value: 'BR', name: 'Bihar' },
+    { value: 'CT', name: 'Chhattisgarh' },
+    { value: 'GA', name: 'Goa' },
+    { value: 'GJ', name: 'Gujarat' },
+    { value: 'HR', name: 'Haryana' },
+    { value: 'HP', name: 'Himachal Pradesh' },
+    { value: 'JK', name: 'Jammu and Kashmir' },
+    { value: 'JH', name: 'Jharkhand' },
+    { value: 'KA', name: 'Karnataka' },
+    { value: 'KL', name: 'Kerala' },
+    { value: 'MP', name: 'Madhya Pradesh' },
+    { value: 'MH', name: 'Maharashtra' },
+    { value: 'MN', name: 'Manipur' },
+    { value: 'ML', name: 'Meghalaya' },
+    { value: 'MZ', name: 'Mizoram' },
+    { value: 'NL', name: 'Nagaland' },
+    { value: 'OD', name: 'Odisha' },
+    { value: 'PB', name: 'Punjab' },
+    { value: 'RJ', name: 'Rajasthan' },
+    { value: 'SK', name: 'Sikkim' },
+    { value: 'TN', name: 'Tamil Nadu' },
+    { value: 'TS', name: 'Telangana' },
+    { value: 'UP', name: 'Uttar Pradesh' },
+    { value: 'UK', name: 'Uttarakhand' },
+    { value: 'WB', name: 'West Bengal' },
+    { value: 'AN', name: 'Andaman and Nicobar Islands' },
+    { value: 'CH', name: 'Chandigarh' },
+    { value: 'DN', name: 'Dadra and Nagar Haveli and Daman and Diu' },
+    { value: 'DL', name: 'Delhi' },
+    { value: 'LD', name: 'Lakshadweep' },
+    { value: 'PY', name: 'Puducherry' }
+];
+
 
   useEffect(() => {
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
@@ -129,8 +166,7 @@ const CheckoutPage = () => {
             Shipping Details
           </span>
 
-          <form
-            className='flex flex-col justify-start items-start w-[90%] gap-4 my-5'>
+          <form className='flex flex-col justify-start items-start w-[90%] gap-4 my-5'>
             <div className='flex flex-col w-full'>
               <label htmlFor='fullname' className='text-lg font-medium mb-1'>
                 Full Name:
@@ -200,40 +236,9 @@ const CheckoutPage = () => {
                 onChange={handleChange}
               >
                 <option>Choose a State</option>
-                <option value='AP'>Andhra Pradesh</option>
-                <option value='AR'>Arunachal Pradesh</option>
-                <option value='AS'>Assam</option>
-                <option value='BR'>Bihar</option>
-                <option value='CT'>Chhattisgarh</option>
-                <option value='GA'>Goa</option>
-                <option value='GJ'>Gujarat</option>
-                <option value='HR'>Haryana</option>
-                <option value='HP'>Himachal Pradesh</option>
-                <option value='JK'>Jammu and Kashmir</option>
-                <option value='JH'>Jharkhand</option>
-                <option value='KA'>Karnataka</option>
-                <option value='KL'>Kerala</option>
-                <option value='MP'>Madhya Pradesh</option>
-                <option value='MH'>Maharashtra</option>
-                <option value='MN'>Manipur</option>
-                <option value='ML'>Meghalaya</option>
-                <option value='MZ'>Mizoram</option>
-                <option value='NL'>Nagaland</option>
-                <option value='OD'>Odisha</option>
-                <option value='PB'>Punjab</option>
-                <option value='RJ'>Rajasthan</option>
-                <option value='SK'>Sikkim</option>
-                <option value='TN'>Tamil Nadu</option>
-                <option value='TS'>Telangana</option>
-                <option value='UP'>Uttar Pradesh</option>
-                <option value='UK'>Uttarakhand</option>
-                <option value='WB'>West Bengal</option>
-                <option value='AN'>Andaman and Nicobar Islands</option>
-                <option value='CH'>Chandigarh</option>
-                <option value='DN'>Dadra and Nagar Haveli and Daman and Diu</option>
-                <option value='DL'>Delhi</option>
-                <option value='LD'>Lakshadweep</option>
-                <option value='PY'>Puducherry</option>
+                {states.map((state) => {
+                  return <option value={`${state.value}`}>{state.name}</option>;
+                })}
               </select>
             </div>
 
@@ -300,7 +305,7 @@ const CheckoutPage = () => {
             <div className='flex flex-col w-full'>
               <div className='flex items-center space-x-2'>
                 <input
-                  type="checkbox"
+                  type='checkbox'
                   id='saveAddress'
                   className='border-2 h-5 w-5 rounded-md focus:outline-none focus:ring-2 focus:ring-customPalette-yellow'
                   name='saveAddress'
@@ -389,14 +394,26 @@ const CheckoutPage = () => {
               </div>
 
               <div className='flex items-center'>
-                <input type='radio' id='card' name='paymentMethod' value='card' className='mr-2 size-4' />
+                <input
+                  type='radio'
+                  id='card'
+                  name='paymentMethod'
+                  value='card'
+                  className='mr-2 size-4'
+                />
                 <label htmlFor='card' className='text-lg'>
                   Credit/Debit Card
                 </label>
               </div>
 
               <div className='flex items-center'>
-                <input type='radio' id='upi' name='paymentMethod' value='upi' className='mr-2 size-4' />
+                <input
+                  type='radio'
+                  id='upi'
+                  name='paymentMethod'
+                  value='upi'
+                  className='mr-2 size-4'
+                />
                 <label htmlFor='upi' className='text-lg'>
                   UPI
                 </label>
