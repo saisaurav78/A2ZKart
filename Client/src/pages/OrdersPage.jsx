@@ -1,19 +1,14 @@
 import Spinner from '@/components/ui/Spinner';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 const BASE_URL=import.meta.env.VITE_BASE_URL
 
 const OrdersPage = () => {
-  const [data, setData] = useState([]); // State to hold the orders data
-  const [loading, setLoading] = useState(true); // Loading state
-  const [error, setError] = useState(null); // Error state
-  // Fetch orders on component mount
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
-  // Function to fetch orders from API
-  const fetchOrders = async () => {
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  
+  const fetchOrders = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -22,16 +17,13 @@ const OrdersPage = () => {
       });
 
       if (response.status === 200) {
-        const orders = response.data.message;
-
-        // Transform the orders data into a simpler structure
-        const formattedOrders = orders.map((order) => ({
+        const formattedOrders = response.data.message.map((order) => ({
           shippingAddress: {
             fullname: order.shippingAddress.fullname,
             address: order.shippingAddress.address,
             city: order.shippingAddress.city,
             state: order.shippingAddress.state,
-            zipcode: ' '+order.shippingAddress.zipcode,
+            zipcode: ' ' + order.shippingAddress.zipcode,
             country: order.shippingAddress.country,
             phone: order.shippingAddress.phone,
           },
@@ -39,31 +31,36 @@ const OrdersPage = () => {
             id: product.id,
             title: product.title,
             quantity: product.quantity,
-            image: product.images[0] || product.image,
+            image: product.images?.[0] ?? product.image,
           })),
           orderStatus: order.orderStatus,
+          paymentStatus: order.paymentStatus,
+          paymentMethod: order.paymentMethod,
           discount: order.discount,
           orderTotal: order.orderTotal,
           shipping: order.shipping,
         }));
 
-        setData(formattedOrders); 
+        setData(formattedOrders);
       }
     } catch (err) {
       setError('Failed to fetch orders. Please try again later.');
       console.error(err);
     } finally {
-      setLoading(false); 
+      setLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
 
   return (
     <div className='container mx-auto p-6'>
       <h1 className='text-3xl font-semibold text-center mb-6'>Orders Page</h1>
 
-      {loading && (
-          <Spinner />
-      )}
+      {loading && <Spinner />}
       {error && <p className='text-red-500 text-center'>{error}</p>}
 
       {!loading && !error && data.length === 0 && <p className='text-center'>No orders found.</p>}
@@ -115,15 +112,29 @@ const OrdersPage = () => {
                   <strong>Total:</strong> $
                   {order.orderTotal - (order.discount / 100) * order.orderTotal + order.shipping}
                 </p>
-                <p
-                  className={`${
-                    order.orderStatus === 'pending'
-                      ? 'text-customPalette-red'
-                      : 'text-customPalette-blue'
-                  } text-xl`}
-                >
-                  <strong>Status:</strong> {order.orderStatus}
-                </p>
+                <div className='text-xl space-y-1'>
+                  <p
+                    className={
+                      order.orderStatus === 'pending'
+                        ? 'text-customPalette-red'
+                        : 'text-customPalette-blue'
+                    }
+                  >
+                    <strong>Order Status:</strong> {order.orderStatus}
+                  </p>
+                  <p
+                    className={
+                      order.paymentStatus === 'pending'
+                        ? 'text-customPalette-red'
+                        : 'text-customPalette-blue'
+                    }
+                  >
+                    <strong>Payment Status:</strong> {order.paymentStatus}
+                  </p>
+                  <p className='text-customPalette-black'>
+                    <strong>Payment Mode:</strong> {order.paymentMethod}
+                  </p>
+                </div>
               </div>
             </div>
           ))}

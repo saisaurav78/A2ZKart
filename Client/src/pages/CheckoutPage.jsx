@@ -4,14 +4,19 @@ import CartContext from '@/Contexts/CartContext';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '@/Contexts/AuthContext';
-import {  toast } from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
+import { CardIcon, CashIcon} from '@/components/icons/Icons';
+import { loadStripe } from '@stripe/stripe-js';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
+const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const [valid, setValid] = useState(true);
   const { auth } = useContext(AuthContext);
   const { cart, cartTotal, setCartTotal, discount, dispatch } = useContext(CartContext);
+  const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
   const states = [
     { value: 'AP', name: 'Andhra Pradesh' },
     { value: 'AR', name: 'Arunachal Pradesh' },
@@ -83,52 +88,72 @@ const CheckoutPage = () => {
   };
   
 
-  const handleOrder = async (paymentMethod) => {
-    try {
-      const isDetailsValid =
-        details &&
-        details.fullname?.trim() &&
-        details.address?.trim() &&
-        details.city?.trim() &&
-        details.state?.trim() &&
-        details.zipcode &&
-        details.phone;
+const handleOrder = async (paymentMethod) => {
+  try {
+    const isDetailsValid =
+      details &&
+      details.fullname?.trim() &&
+      details.address?.trim() &&
+      details.city?.trim() &&
+      details.state?.trim() &&
+      details.zipcode &&
+      details.phone;
 
-      if (!isDetailsValid) {
-        setValid(false);
-        toast.error('Ensure All fields are valid');
-        return;
-      }
-      const uri = `${BASE_URL}/orders/`;
-      const payload = {
-        order: cart,
-        orderTotal: cartTotal,
-        discount: discount,
-        paymentMethod,
-        address: details,
-      };
+    if (!isDetailsValid) {
+      setValid(false);
+      toast.error('Ensure all address fields are valid');
+      return;
+    }
 
-      const config = {
-        withCredentials: true,
-      };
+    const uri = `${BASE_URL}/orders/`;
+    const payload = {
+      order: cart,
+      orderTotal: cartTotal,
+      discount: discount,
+      paymentMethod,
+      address: details,
+    };
 
-      const response = await axios.post(uri, payload, config);
+    const config = {
+      withCredentials: true,
+    };
 
+    const response = await axios.post(uri, payload, config);
+
+    if (paymentMethod === 'cod') {
       if (response.status === 201) {
-        dispatch({type:'CLEAR_CART'})
-        localStorage.removeItem('a2zkart')
+        dispatch({ type: 'CLEAR_CART' });
+        localStorage.removeItem('a2zkart');
         navigate('/thankyou', { state: { orderSuccess: true } });
       } else {
         alert('Unexpected response from server');
       }
-    } catch (error) {
-      console.error('Order Error:', error);
-      alert(
-        error.response?.data?.message ||
-          'An error occurred while placing the order. Please try again.',
-      );
     }
-  };
+    else if (paymentMethod === 'card') {
+      const { sessionId } = response.data;
+
+      if (sessionId) {
+        const stripe = await stripePromise;
+        const { error } = await stripe.redirectToCheckout({
+          sessionId,
+        });
+
+        if (error) {
+          console.error('Stripe redirect error:', error);
+          alert('Something went wrong. Please try again.');
+        }
+      } else {
+        alert('Failed to initiate payment. Please try again.');
+      }
+    }
+  } catch (error) {
+    console.error('Order Error:', error);
+    alert(
+      error.response?.data?.message ||
+        'An error occurred while placing the order. Please try again.',
+    );
+  }
+};
 
   const fetchAddress = async () => {
     try {
@@ -137,11 +162,11 @@ const CheckoutPage = () => {
       });
 
       if (response.status === 200 && response.data.message.length > 0) {
-        toast.success('Existing address found',{duration:3000});
+        toast.success('Existing address found',{duration:2000});
         setDetails(response.data.message[0]);
       }
     } catch (error) {
-      toast.error('No address found', { duration: 3000});
+      toast.error('No address found', { duration: 2000});
     }
   };
   useEffect(() => {
@@ -237,7 +262,11 @@ const CheckoutPage = () => {
               >
                 <option>Choose a State</option>
                 {states.map((state) => {
-                  return <option value={`${state.value}`}>{state.name}</option>;
+                  return (
+                    <option key={state.value} value={`${state.value}`}>
+                      {state.name}
+                    </option>
+                  );
                 })}
               </select>
             </div>
@@ -322,12 +351,6 @@ const CheckoutPage = () => {
               <NavLink to={'/cart'} className='w-[100%] p-4 text-customPalette-black font-semibold'>
                 Return to cart
               </NavLink>
-              {/* <button
-                type='submit'
-                className='w-[50%] h-[25%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md'
-              >
-                {valid ? 'Add Address' : 'Update '}
-              </button> */}
             </div>
           </form>
         </div>
@@ -379,48 +402,44 @@ const CheckoutPage = () => {
                 handleOrder(paymentMethod);
               }}
             >
-              <div className='flex items-center'>
-                <input
-                  type='radio'
-                  id='cod'
-                  name='paymentMethod'
-                  value='cod'
-                  className='mr-2 size-4'
-                  required
-                />
-                <label htmlFor='cod' className='text-lg'>
-                  Cash on Delivery (COD)
+              <div className='space-y-4'>
+                <label
+                  htmlFor='cod'
+                  className='flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:shadow-md transition'
+                >
+                  <input
+                    type='radio'
+                    id='cod'
+                    name='paymentMethod'
+                    value='cod'
+                    className='accent-customPalette-red size-5'
+                    required
+                  />
+                  <CashIcon className='w-6 h-6 text-customPalette-red' />
+                  <span className='text-lg text-customPalette-black'>Cash on Delivery (COD)</span>
+                </label>
+
+                <label
+                  htmlFor='card'
+                  className='flex items-center gap-3 p-3 border rounded-xl cursor-pointer hover:shadow-md transition'
+                >
+                  <input
+                    type='radio'
+                    id='card'
+                    name='paymentMethod'
+                    value='card'
+                    className='accent-customPalette-red size-5'
+                  />
+                  <CardIcon className='w-6 h-6 text-customPalette-blue' />
+                  <span className='text-lg text-customPalette-black'>Credit/Debit Card</span>
                 </label>
               </div>
 
-              <div className='flex items-center'>
-                <input
-                  type='radio'
-                  id='card'
-                  name='paymentMethod'
-                  value='card'
-                  className='mr-2 size-4'
-                />
-                <label htmlFor='card' className='text-lg'>
-                  Credit/Debit Card
-                </label>
-              </div>
-
-              <div className='flex items-center'>
-                <input
-                  type='radio'
-                  id='upi'
-                  name='paymentMethod'
-                  value='upi'
-                  className='mr-2 size-4'
-                />
-                <label htmlFor='upi' className='text-lg'>
-                  UPI
-                </label>
-              </div>
               <button
                 type='submit'
-                className='w-[100%] bg-customPalette-yellow text-customPalette-black font-semibold py-2 mt-4 rounded-md hover:bg-customPalette-blue hover:text-customPalette-white transition duration-200'
+                className='w-full bg-customPalette-yellow text-customPalette-black font-semibold py-3 mt-4 rounded-md 
+    hover:bg-customPalette-blue hover:text-customPalette-white transition-all duration-200 
+    active:scale-95 focus:outline-none focus:ring-2 focus:ring-customPalette-blue focus:ring-opacity-50'
               >
                 Place Order
               </button>
