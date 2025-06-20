@@ -1,4 +1,5 @@
 import { EmptyCartIcon, TrashIcon } from '@/components/icons/Icons';
+import QuantitySelector from '@/components/QuantitySelector';
 import AuthContext from '@/Contexts/AuthContext';
 import CartContext from '@/Contexts/CartContext';
 import React, { useEffect, useState, useContext } from 'react';
@@ -67,27 +68,11 @@ const CartPage = () => {
                         />
                       </td>
                       <td className='px-4 py-2'>
-                        <div className='flex justify-evenly'>
-                          <button
-                            className='bg-customPalette-red text-customPalette-white size-5'
-                            onClick={() => {
-                              dispatch({ type: 'Decrease', item: eachItem });
-                            }}
-                          >
-                            -
-                          </button>
-                          <span>{eachItem.quantity}</span>
-                          <button
-                            className='bg-customPalette-blue text-customPalette-white size-5'
-                            onClick={() => {
-                              eachItem.quantity > 9
-                                ? alert('You cannot add more than 10 items')
-                                : dispatch({ type: 'Increase', item: eachItem });
-                            }}
-                          >
-                            +
-                          </button>
-                        </div>
+                        <QuantitySelector
+                          quantity={eachItem.quantity}
+                          onDecrease={() => dispatch({ type: 'Decrease', item: eachItem })}
+                          onIncrease={() => dispatch({ type: 'Increase', item: eachItem })}
+                        />
                       </td>
                       <td className='px-4 py-2'>
                         $ {Math.ceil(eachItem.price * eachItem.quantity)}
@@ -98,9 +83,9 @@ const CartPage = () => {
                           className='text-customPalette-red'
                           onClick={() => {
                             toast.error('Removed from Cart', {
-                              duration: 2000
+                              duration: 2000,
                             });
-                        
+
                             dispatch({ type: 'Remove', item: eachItem });
                           }}
                         >
@@ -112,7 +97,6 @@ const CartPage = () => {
                 </tbody>
               </table>
             </div>
-            
 
             <div
               className='col-start-2 lg:flex lg:flex-col lg:mx-28 lg:m-20 lg:gap-6 sm:gap-8 row-end-3 text-customPalette-black

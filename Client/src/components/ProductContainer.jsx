@@ -7,10 +7,11 @@ import CartContext from '../Contexts/CartContext';
 import VisibilityContext from '@/Contexts/VisibilityContext';
 import { useLocation } from 'react-router-dom';
 import { DrawIcon } from './icons/Icons';
+import QuantitySelector from './QuantitySelector';
 
 const ProductContainer = () => {
   const location = useLocation();
-  const { dispatch } = useContext(CartContext);
+  const { dispatch, cart } = useContext(CartContext);
   const { query, selected } = useContext(SearchContext);
   const { setVisible } = useContext(VisibilityContext);
 
@@ -113,7 +114,7 @@ useEffect(() => {
       <section className='max-w-screen-lg mx-auto p-4'>
         <header className='flex justify-between items-center mb-6'>
           <p className='text-sm font-medium lg lg:text-lg text-customPalette-black'>
-            Showing page {currPage} of {TOTAL_PAGES} 
+            Showing page {currPage} of {TOTAL_PAGES}
           </p>
 
           <select
@@ -133,7 +134,7 @@ useEffect(() => {
           }}
           className='lg:hidden ml-[100vw] sm:ml-[80vw] md:ml-[80vw]'
         >
-          <DrawIcon/>
+          <DrawIcon />
         </span>
       </section>
 
@@ -146,32 +147,46 @@ useEffect(() => {
             No products found
           </p>
         ) : (
-          paginatedProducts.map((product) => (
-            <div
-              key={product.id}
-              className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-3 shadow-md border rounded-md transition-all'
-            >
-              <span className='text-xl p-2 text-center font-medium text-customPalette-black'>
-                {product.title}
-              </span>
-              <img
-                loading='lazy'
-                src={product.images[0]}
-                alt={`${product.title} image`}
-                className='w-full max-h-52 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
-              />
+          paginatedProducts.map((product) => {
+            const cartItem = cart.find((item) => item.id === product.id);
 
-              <span className='text-2xl p-2 text-customPalette-red text-center'>
-                {'Price: $' + product.price}
-              </span>
-              <button
-                onClick={() => addToCart(product)}
-                className='bg-customPalette-blue text-white px-4 py-2 rounded-md mt-2 hover:bg-customPalette-yellow hover:text-black transition-all'
+            return (
+              <div
+                key={product.id}
+                className='w-full text-wrap bg-customPalette-white flex flex-col items-center justify-center p-3 shadow-md border rounded-md transition-all'
               >
-                Add to Cart
-              </button>
-            </div>
-          ))
+                <span className='text-xl p-2 text-center font-medium text-customPalette-black'>
+                  {product.title}
+                </span>
+                <img
+                  loading='lazy'
+                  src={product.images[0]}
+                  alt={`${product.title} image`}
+                  className='w-full max-h-52 p-3 object-contain rounded-sm hover:scale-105 transition-all ease-in-out hover:-translate-y-2 delay-75'
+                />
+                <span className='text-2xl p-2 text-customPalette-red text-center'>
+                  {'Price: $' + product.price}
+                </span>
+                {cartItem ? (
+                  <div className='flex justify-center'>
+                    <QuantitySelector
+                      quantity={cartItem.quantity}
+                      onDecrease={() => dispatch({ type: 'Decrease', item: cartItem })}
+                      onIncrease={() => dispatch({ type: 'Increase', item: cartItem })}
+                    />
+                  </div>
+                ) 
+                : (
+                <button
+                  onClick={() => addToCart(product)}
+                  className='bg-customPalette-blue text-white px-4 py-2 rounded-md mt-2 hover:bg-customPalette-yellow hover:text-black transition-all'
+                >
+                  Add to Cart
+                </button>
+                )}
+              </div>
+            );
+          })
         )}
       </section>
 
