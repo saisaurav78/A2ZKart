@@ -5,7 +5,7 @@ const URI = process.env.URI
 
 const DBconnect= async () => {
     try {
-        await mongoose.connect(URI, {dbName:'A2ZKart'})
+        await mongoose.connect(URI, {dbName:'A2ZKart', autoIndex:true})
       const db = mongoose.connection.useDb('A2ZKart');
         console.log('connected to db')
 
