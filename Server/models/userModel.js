@@ -29,5 +29,12 @@ const userSchema = new mongoose.Schema({
     default: 'local',
   },
 });
+
+// Apply partial index to only Google users (those with googleId set)
+userSchema.index(
+  { googleId: 1 },
+  { unique: true, sparse: true, partialFilterExpression: { provider: 'google' } }
+);
+
 const userModel= mongoose.model('User',userSchema, "user")
 export default userModel

@@ -10,13 +10,16 @@ if (!cached) {
   cached = global.mongoose = { conn: null, promise: null };
 }
 
+const isProduction = process.env.NODE_ENV === 'production';
+const autoIndex = isProduction ? false : true;
+
 const DBconnect = async () => {
   if (cached.conn) {
     return cached.conn; // Return existing connection if available
   }
   if (!cached.promise) {
     cached.promise = mongoose
-      .connect(URI, { dbName: 'A2ZKart', autoIndex: true })
+      .connect(URI, { dbName: 'A2ZKart', autoIndex: autoIndex })
       .then((mongoose) => {
         console.log('connected to db');
         return mongoose.connection.useDb('A2ZKart');
