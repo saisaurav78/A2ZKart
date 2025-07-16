@@ -14,10 +14,6 @@ export const CartContextProvider = ({ children }) => {
   const [cartTotal, setCartTotal] = useState(0);
   const [discount, setDiscount] = useState(0);
 
-  useEffect(() => {
-      localStorage.setItem('a2zkart', JSON.stringify(cart));
-  }, [cart]); 
-
   const filteredCart = cart.map((item) => ({
     id: item.id,
     title: item.title,

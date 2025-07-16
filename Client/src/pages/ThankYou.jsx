@@ -24,7 +24,6 @@ const ThankYou = () => {
         const response = await axios.get(verifyUrl, { withCredentials: true });
         if (response.status === 200 || response.status === 201) {
            dispatch({ type: 'CLEAR_CART' });
-          localStorage.removeItem('a2zkart');
           setPaymentMethod('stripe');
         } else {
           console.warn('Stripe verification failed. Redirecting to cart.');
