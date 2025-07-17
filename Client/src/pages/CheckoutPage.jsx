@@ -5,15 +5,16 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '@/Contexts/AuthContext';
 import { toast } from 'react-hot-toast';
-import { CardIcon, CashIcon} from '@/components/icons/Icons';
+import { CardIcon, CashIcon } from '@/components/icons/Icons';
 import { loadStripe } from '@stripe/stripe-js';
+import { InlineSpinner } from '@/components/ui/Spinner';
 const BASE_URL = import.meta.env.VITE_BASE_URL;
 const STRIPE_PUBLISHABLE_KEY = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-
 
 const CheckoutPage = () => {
   const navigate = useNavigate();
   const [valid, setValid] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const { auth } = useContext(AuthContext);
   const { cart, cartTotal, setCartTotal, discount, dispatch } = useContext(CartContext);
   const stripePromise = loadStripe(STRIPE_PUBLISHABLE_KEY);
@@ -51,9 +52,8 @@ const CheckoutPage = () => {
     { value: 'DN', name: 'Dadra and Nagar Haveli and Daman and Diu' },
     { value: 'DL', name: 'Delhi' },
     { value: 'LD', name: 'Lakshadweep' },
-    { value: 'PY', name: 'Puducherry' }
-];
-
+    { value: 'PY', name: 'Puducherry' },
+  ];
 
   useEffect(() => {
     const itemsPrice = cart.map((item) => parseFloat(item.price) * item.quantity);
@@ -72,88 +72,90 @@ const CheckoutPage = () => {
     zipcode: '',
     country: '',
     phone: '',
-    saveAddress:false
+    saveAddress: false,
   });
 
   const handleChange = (e) => {
     const { name, type, checked, value } = e.target;
-   if (type !== 'checkbox') {
-     setValid(value.trim() !== ''); 
+    if (type !== 'checkbox') {
+      setValid(value.trim() !== '');
     }
 
     setDetails((prevDetails) => ({
       ...prevDetails,
-      [name]: type==='checkbox'? checked: value,
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
-  
 
-const handleOrder = async (paymentMethod) => {
-  try {
-    const isDetailsValid =
-      details &&
-      details.fullname?.trim() &&
-      details.address?.trim() &&
-      details.city?.trim() &&
-      details.state?.trim() &&
-      details.zipcode &&
-      details.phone;
+  const handleOrder = async (paymentMethod) => {
+    setIsLoading(true);
+    try {
+      const isDetailsValid =
+        details &&
+        details.fullname?.trim() &&
+        details.address?.trim() &&
+        details.city?.trim() &&
+        details.state?.trim() &&
+        details.zipcode &&
+        details.phone;
 
-    if (!isDetailsValid) {
-      setValid(false);
-      toast.error('Ensure all address fields are valid');
-      return;
-    }
-
-    const uri = `${BASE_URL}/orders/`;
-    const payload = {
-      order: cart,
-      orderTotal: cartTotal,
-      discount: discount,
-      paymentMethod,
-      address: details,
-    };
-
-    const config = {
-      withCredentials: true,
-    };
-
-    const response = await axios.post(uri, payload, config);
-
-    if (paymentMethod === 'cod') {
-      if (response.status === 201) {
-        dispatch({ type: 'CLEAR_CART' });
-        localStorage.removeItem('a2zkart');
-        navigate('/thankyou', { state: { orderSuccess: true } });
-      } else {
-        alert('Unexpected response from server');
+      if (!isDetailsValid) {
+        setValid(false);
+        toast.error('Ensure all address fields are valid');
+        setIsLoading(false);
+        return;
       }
-    }
-    else if (paymentMethod === 'card') {
-      const { sessionId } = response.data;
 
-      if (sessionId) {
-        const stripe = await stripePromise;
-        const { error } = await stripe.redirectToCheckout({
-          sessionId,
-        });
+      const uri = `${BASE_URL}/orders/`;
+      const payload = {
+        order: cart,
+        orderTotal: cartTotal,
+        discount: discount,
+        paymentMethod,
+        address: details,
+      };
 
-        if (error) {
-          console.error('Stripe redirect error:', error);
-          alert('Something went wrong. Please try again.');
+      const config = {
+        withCredentials: true,
+      };
+
+      const response = await axios.post(uri, payload, config);
+
+      if (paymentMethod === 'cod') {
+        if (response.status === 201) {
+          dispatch({ type: 'CLEAR_CART' });
+          localStorage.removeItem('a2zkart');
+          navigate('/thankyou', { state: { orderSuccess: true } });
+        } else {
+          alert('Unexpected response from server');
         }
-      } else {
-        alert('Failed to initiate payment. Please try again.');
+      } else if (paymentMethod === 'card') {
+        const { sessionId } = response.data;
+
+        if (sessionId) {
+          const stripe = await stripePromise;
+          const { error } = await stripe.redirectToCheckout({
+            sessionId,
+          });
+
+          if (error) {
+            console.error('Stripe redirect error:', error);
+            alert('Something went wrong. Please try again.');
+          }
+        } else {
+          alert('Failed to initiate payment. Please try again.');
+        }
       }
+    } catch (error) {
+      console.error('Order Error:', error);
+      alert(
+        error.response?.data?.message ||
+          'An error occurred while placing the order. Please try again.',
+      );
+    } finally {
+      setIsLoading(false);
     }
-  } catch (error) {
-    console.error('Order Error:', error);
-    alert(
-      error.response?.data?.message ||
-        'An error occurred while placing the order. Please try again.',
-    );
-  }
-};
+  };
 
   const fetchAddress = async () => {
     try {
@@ -162,11 +164,11 @@ const handleOrder = async (paymentMethod) => {
       });
 
       if (response.status === 200 && response.data.message.length > 0) {
-        toast.success('Existing address found',{duration:2000});
+        toast.success('Existing address found', { duration: 2000 });
         setDetails(response.data.message[0]);
       }
     } catch (error) {
-      toast.error('No address found', { duration: 2000});
+      toast.error('No address found', { duration: 2000 });
     }
   };
   useEffect(() => {
@@ -181,7 +183,7 @@ const handleOrder = async (paymentMethod) => {
     } else {
       fetchAddress();
     }
-  }, [cart]); 
+  }, [cart]);
 
   return (
     <>
@@ -437,11 +439,18 @@ const handleOrder = async (paymentMethod) => {
 
               <button
                 type='submit'
+                disabled={isLoading}
                 className='w-full bg-customPalette-yellow text-customPalette-black font-semibold py-3 mt-4 rounded-md 
     hover:bg-customPalette-blue hover:text-customPalette-white transition-all duration-200 
     active:scale-95 focus:outline-none focus:ring-2 focus:ring-customPalette-blue focus:ring-opacity-50'
               >
-                Place Order
+                {isLoading ? (
+                  <span className='flex items-center gap-2 justify-center'>
+                    Processing <InlineSpinner />
+                  </span>
+                ) : (
+                  'Place Order'
+                )}
               </button>
             </form>
           </div>

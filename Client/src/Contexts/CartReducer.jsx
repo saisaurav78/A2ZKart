@@ -1,8 +1,14 @@
 const initialState = [];
 
 // Initializer: used in useReducer's third argument
-export const initializer = (initialValue = initialState) =>
-  JSON.parse(localStorage.getItem('a2zkart')) || initialValue;
+export const initializer = (initialValue = initialState) => {
+  try {
+    const stored = localStorage.getItem('a2zkart');
+    return stored ? JSON.parse(stored) : initialValue;
+  } catch {
+    return initialValue;
+  }
+};
 
 const CartReducer = (state, action) => {
   let updatedCart;
@@ -10,7 +16,8 @@ const CartReducer = (state, action) => {
   switch (action.type) {
     case 'CLEAR_CART':
       updatedCart = [];
-      break;
+      localStorage.removeItem('a2zkart');
+      return updatedCart;
 
     case 'SET_CART':
       updatedCart = action.payload ? action.payload : [];
