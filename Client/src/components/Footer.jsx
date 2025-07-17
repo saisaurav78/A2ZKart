@@ -1,6 +1,8 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 
+const Year = new Date().getFullYear()
+
 const Footer = () => {
   return (
     <footer className='relative w-[100%] h-max text-customPalette-white bg-customPalette-black px-4 md:px-20 py-16'>
@@ -76,7 +78,7 @@ const Footer = () => {
         </div>
       </div>
       <div className='w-full mt-4'>
-        <p className='text-center'>&copy; A2ZKart 2024 All rights reserved</p>
+        <p className='text-center'>&copy; A2ZKart {Year} All rights reserved</p>
         <p className='text-center'>Developed with ❤️ by Sai Sowrav</p>
       </div>
     </footer>

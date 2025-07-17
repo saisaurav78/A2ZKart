@@ -34,14 +34,6 @@ const LandingPage = () => {
           </div>
           <div>
             <img
-              src='/Images/Sale.webp'
-              alt='Hero Banner'
-              className='w-full h-[80vh] object-contain p-2'
-              loading='lazy'
-            />
-          </div>
-          <div>
-            <img
               src='/Images/Slider-Image-1.webp'
               alt='Hero Banner'
               className='w-full h-[80vh] object-contain p-2'
